@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FRIDAY - Intelligence Terminal</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
 
@@ -21,9 +23,14 @@
             --accent-red: #ff3333;
             --accent-green: #00ff88;
             --accent-blue: #00ccff;
+            --accent-orange: #ff9900;
+            --accent-yellow: #ffff00;
             --grid-color: rgba(255, 255, 255, 0.03);
             --glow-red: rgba(255, 51, 51, 0.3);
             --glow-green: rgba(0, 255, 136, 0.3);
+            --glow-blue: rgba(0, 204, 255, 0.3);
+            --glow-orange: rgba(255, 153, 0, 0.4);
+            --glow-yellow: rgba(255, 255, 0, 0.4);
         }
 
         body {
@@ -522,6 +529,430 @@
         }
 
         /* ==========================================
+           MAP SECTION
+        ========================================== */
+        /* HUD & TACTICAL OVERLAY STYLES */
+        .hud-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Clicks pass through to map */
+            z-index: 10;
+            background: radial-gradient(circle, transparent 40%, rgba(0, 10, 0, 0.8) 100%);
+            box-shadow: inset 0 0 100px rgba(0, 255, 136, 0.1);
+            overflow: hidden;
+        }
+
+        .hud-grid-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        .hud-scanline {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 15px var(--accent-green);
+            animation: hudScan 4s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes hudScan { 0% { top: -10%; } 100% { top: 110%; } }
+
+        .hud-center-group {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0; height: 0;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .hud-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px dashed var(--accent-green);
+            opacity: 0.4;
+        }
+
+        .hud-ring-outer {
+            width: 500px; height: 500px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid var(--accent-green);
+            border-right: 4px solid var(--accent-green);
+            animation: spin 20s linear infinite;
+        }
+
+        .hud-ring-inner {
+            width: 280px; height: 280px;
+            border: 1px dashed var(--accent-red);
+            opacity: 0.3;
+            animation: spin 12s linear infinite reverse;
+        }
+
+        .hud-crosshair {
+            width: 60px; height: 60px;
+            position: relative;
+        }
+        .hud-crosshair::before, .hud-crosshair::after {
+            content: ''; position: absolute; background: var(--accent-green);
+        }
+        .hud-crosshair::before { top: 29px; left: 0; width: 60px; height: 2px; }
+        .hud-crosshair::after { left: 29px; top: 0; height: 60px; width: 2px; }
+
+        .hud-corner {
+            position: absolute;
+            width: 80px; height: 80px;
+            border: 2px solid var(--accent-green);
+            opacity: 0.6;
+        }
+        .hud-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .hud-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+        .hud-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+        .hud-br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        .hud-data-block {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--accent-green);
+            background: rgba(0, 5, 0, 0.7);
+            padding: 15px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            backdrop-filter: blur(4px);
+            min-width: 180px;
+        }
+        .hud-left { left: 40px; text-align: left; border-left: 3px solid var(--accent-green); }
+        .hud-right { right: 40px; text-align: right; border-right: 3px solid var(--accent-red); }
+
+        .hud-row { margin-bottom: 6px; letter-spacing: 1px; display: flex; justify-content: space-between; }
+        .text-red { color: var(--accent-red); }
+        .blink { animation: blink 1s infinite; }
+
+        .hud-graph {
+            display: flex; gap: 3px; height: 40px; align-items: flex-end; justify-content: flex-end; margin-top: 15px;
+        }
+        .bar { width: 6px; background: var(--accent-green); opacity: 0.6; animation: barHeight 0.5s infinite alternate; }
+        .bar:nth-child(odd) { animation-duration: 0.7s; background: var(--accent-red); }
+
+        @keyframes barHeight { from { height: 10%; } to { height: 100%; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Existing Map Styles */
+        .fixed-controls-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1001;
+            display: flex;
+            gap: 10px;
+        }
+        #map-toggle-button, #data-toggle-button, #files-toggle-button {
+            background: var(--accent-green);
+            color: var(--bg-darker);
+            font-family: 'Share Tech Mono', monospace;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px var(--glow-green);
+        }
+        #map-toggle-button:hover, #data-toggle-button:hover, #files-toggle-button:hover {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 0 20px var(--glow-red);
+        }
+
+        .draggable-window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            max-width: 900px;
+            height: 60vh;
+            background: var(--bg-darker);
+            border: 1px solid var(--accent-green);
+            box-shadow: 0 0 40px var(--glow-green);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            min-width: 400px;
+            min-height: 300px;
+            transition: top 0.5s ease, left 0.5s ease, width 0.5s ease, height 0.5s ease;
+        }
+        .draggable-window.hidden {
+            display: none;
+        }
+
+        .window-header {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 10px 15px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--accent-green);
+        }
+
+        .window-title {
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 2px;
+            color: var(--accent-green);
+        }
+
+        .hud-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .hud-btn {
+            background: rgba(0, 10, 0, 0.9);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 8px 25px;
+            font-family: 'Share Tech Mono';
+            font-size: 12px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+        }
+        .hud-btn:hover {
+            background: var(--accent-green);
+            color: black;
+            box-shadow: 0 0 20px var(--glow-green);
+        }
+
+        .window-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .window-close-btn:hover {
+            color: var(--accent-red);
+        }
+
+        .window-content {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        #map-container {
+            background: var(--bg-darker);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cesium-widget-credits {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            color: var(--text-secondary);
+            font-size: 10px;
+            background: rgba(5, 5, 5, 0.7);
+            padding: 2px 5px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .cesium-viewer-toolbar, .cesium-viewer-animation, .cesium-viewer-timeline, .cesium-viewer-bottom {
+            display: none !important; /* Hide complex UI for a cleaner look */
+        }
+
+        .resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            cursor: se-resize;
+            background: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 4px,
+                var(--accent-green) 4px,
+                var(--accent-green) 6px
+            );
+            opacity: 0.5;
+        }
+
+        .red-flash {
+            border-color: var(--accent-red) !important;
+            box-shadow: 0 0 60px var(--glow-red) !important;
+        }
+        .red-flash .window-header {
+            background: rgba(255, 51, 51, 0.3) !important;
+            border-bottom-color: var(--accent-red) !important;
+        }
+        .red-flash .window-content {
+            background: rgba(100, 0, 0, 0.2) !important;
+        }
+        .red-flash .window-content .boot-text {
+            color: var(--accent-red) !important;
+            text-shadow: 0 0 10px var(--glow-red);
+        }
+
+        /* SYSTEM OVERRIDE STYLES */
+        #system-override-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9998;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #system-override-screen.hidden {
+            display: none;
+        }
+        #cmd-window {
+            width: 80vw;
+            max-width: 900px;
+            height: 60vh;
+            background: #050505;
+            border: 1px solid var(--accent-green);
+            padding: 20px;
+            overflow: hidden;
+        }
+        #cmd-text {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--accent-green);
+            font-size: 18px;
+            white-space: pre-wrap;
+        }
+        .boot-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: var(--accent-green);
+            white-space: pre;
+            height: 100%;
+            overflow-y: hidden;
+        }
+
+        /* DATA WINDOW SPECIFIC STYLES */
+        .data-panel {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,255,136,0.1);
+            padding: 10px;
+            overflow: hidden;
+            color: var(--accent-green);
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            flex-direction: column;
+        }
+        .data-waterfall { flex: 2; }
+        .data-main-viz { flex: 5; }
+        .data-status-panel { flex: 3; }
+
+        .data-waterfall pre {
+            font-size: 10px;
+            white-space: pre;
+            height: 100%;
+            overflow-y: hidden;
+            color: var(--text-secondary);
+        }
+
+        .viz-title {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            border-bottom: 1px solid rgba(0,255,136,0.1);
+            padding-bottom: 5px;
+            flex-shrink: 0;
+        }
+
+        #waveform {
+            flex-shrink: 0;
+        }
+
+        #waveform path {
+            stroke: var(--accent-green);
+            stroke-width: 1;
+            fill: rgba(0,255,136,0.1);
+            transition: d 0.1s linear;
+        }
+
+        .bar-charts {
+            display: flex;
+            justify-content: space-around;
+            height: 80px;
+            flex-shrink: 0;
+        }
+        .chart-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+        }
+        .chart-group .bar {
+            width: 8px;
+            background: var(--accent-blue);
+            animation: chart-pulse 1s infinite alternate;
+        }
+
+        @keyframes chart-pulse {
+            from { height: 5%; opacity: 0.5; }
+            to { height: 100%; opacity: 1; }
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 12px;
+        }
+        .status-label { color: var(--text-secondary); }
+        .status-value { font-weight: bold; }
+
+        .circular-scanner {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 1px dashed var(--accent-green);
+            margin: 20px auto;
+            position: relative;
+            animation: spin 10s linear infinite;
+        }
+        .scanner-arm {
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent-green));
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: left center;
+        }
+
+        /* ==========================================
            TECH STACK SECTION
         ========================================== */
         .tech-grid {
@@ -761,6 +1192,7 @@
                 <li><a href="#hero">HOME</a></li>
                 <li><a href="#problem">PROBLEM</a></li>
                 <li><a href="#solution">SOLUTION</a></li>
+                <li><a href="#" id="nav-map-link">MAP</a></li>
                 <li><a href="#tech">TECHNOLOGY</a></li>
                 <li><a href="#vision">VISION</a></li>
                 <li><a href="#about">ABOUT</a></li>
@@ -996,6 +1428,132 @@
         </div>
     </section>
 
+    <!-- Draggable Map Window -->
+    <div class="fixed-controls-container">
+        <button id="map-toggle-button">MAP</button>
+        <button id="data-toggle-button">DATA</button>
+        <button id="files-toggle-button">FILES</button>
+    </div>
+    <div id="map-window" class="draggable-window hidden">
+        <div class="window-header">
+            <span class="window-title">// GLOBAL EVENT TRACKER</span>
+            <button class="window-close-btn">×</button>
+        </div>
+        <div class="window-content" style="position: relative; overflow: hidden;">
+            <div id="map-container"></div>
+            
+            <!-- TACTICAL HUD OVERLAY -->
+            <div class="hud-overlay">
+                <div class="hud-grid-bg"></div>
+                <div class="hud-scanline"></div>
+                
+                <!-- Center Elements -->
+                <div class="hud-center-group">
+                    <div class="hud-ring hud-ring-outer"></div>
+                    <div class="hud-ring hud-ring-inner"></div>
+                    <div class="hud-crosshair"></div>
+                </div>
+
+                <!-- Corners -->
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-tr"></div>
+                <div class="hud-corner hud-bl"></div>
+                <div class="hud-corner hud-br"></div>
+
+                <!-- Data Panels -->
+                <div class="hud-data-block hud-left">
+                    <div class="hud-row"><span>SYS.STATUS</span> <span class="blink">ONLINE</span></div>
+                    <div class="hud-row"><span>LAT</span> <span id="hud-lat">34.0522</span></div>
+                    <div class="hud-row"><span>LNG</span> <span id="hud-lng">118.2437</span></div>
+                    <div class="hud-row"><span>ENCRYPTION</span> <span>AES-256</span></div>
+                    <div class="hud-row"><span>UPLINK</span> <span>STABLE</span></div>
+                </div>
+
+                <div class="hud-data-block hud-right">
+                    <div class="hud-row"><span>TARGETS</span> <span id="hud-targets">0</span></div>
+                    <div class="hud-row"><span>THREAT</span> <span class="text-red blink">CRITICAL</span></div>
+                    <div class="hud-graph">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="hud-controls">
+                    <button class="hud-btn">SCAN</button>
+                    <button class="hud-btn">LOCK</button>
+                    <button class="hud-btn">MODE</button>
+                    <button class="hud-btn text-red">RESET</button>
+                </div>
+            </div>
+        </div>
+        <div class="resize-handle"></div>
+    </div>
+
+    <!-- Draggable Data Window -->
+    <div id="data-window" class="draggable-window hidden">
+        <div class="window-header">
+            <span class="window-title">// REAL-TIME DATA ANALYSIS</span>
+            <button class="window-close-btn">×</button>
+        </div>
+        <div class="window-content" style="position: relative; overflow: hidden; display: flex; padding: 10px; gap: 10px;">
+            <!-- Left Panel: Data Waterfall -->
+            <div class="data-panel data-waterfall">
+                <pre id="waterfall-content"></pre>
+            </div>
+            <!-- Center Panel: Main Viz -->
+            <div class="data-panel data-main-viz">
+                <div class="viz-title">SPECTRAL ANALYSIS // VOICEPRINT</div>
+                <svg id="waveform" width="100%" height="150"></svg>
+                <div class="viz-title">SYSTEM LOAD</div>
+                <div class="bar-charts">
+                    <div class="chart-group"></div>
+                    <div class="chart-group"></div>
+                    <div class="chart-group"></div>
+                </div>
+                <div style="margin-top: auto; border: 1px solid rgba(0, 255, 136, 0.2); background: rgba(0, 20, 0, 0.5); padding: 8px; font-size: 10px; color: var(--text-secondary); text-align: center; letter-spacing: 1px;">
+                    // SYSTEM NOTE: REAL-TIME WEBSITE DATA TRANSMISSION
+                </div>
+            </div>
+            <!-- Right Panel: Status -->
+            <div class="data-panel data-status-panel">
+                <div class="status-item">
+                    <div class="status-label">BIOMETRIC SIG</div>
+                    <div class="status-value text-red blink">UNSTABLE</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">PSYCH-PROFILE</div>
+                    <div class="status-value" id="psych-profile">AGITATED</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">THREAT INDEX</div>
+                    <div class="status-value" id="threat-index">92.7 %</div>
+                </div>
+                <div class="circular-scanner"><div class="scanner-arm"></div></div>
+            </div>
+        </div>
+        <div class="resize-handle"></div>
+    </div>
+
+    <!-- Draggable Files Window -->
+    <div id="files-window" class="draggable-window hidden">
+        <div class="window-header">
+            <span class="window-title">// FILE SYSTEM</span>
+            <button class="window-close-btn">×</button>
+        </div>
+        <div class="window-content" style="display: flex; justify-content: center; align-items: center;">
+            <button id="view-sequence-btn" class="cta-button" style="opacity: 1; animation: none;">VIEW</button>
+        </div>
+        <div class="resize-handle"></div>
+    </div>
+
+    <!-- System Override Screen -->
+    <div id="system-override-screen" class="hidden">
+        <div id="cmd-window">
+            <pre id="cmd-text"></pre>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -1006,7 +1564,7 @@
                 <a href="#">GITHUB</a>
                 <a href="#">DOCUMENTATION</a>
                 <a href="#">DISCORD</a>
-                <a href="#">CROWDFUNDING</a>
+                <a href="Thankyoupage.html">ACKNOWLEDGEMENTS</a>
             </div>
         </div>
     </footer>
@@ -1138,9 +1696,484 @@
         });
 
         // ==========================================
+        // MAP INITIALIZATION
+        // ==========================================
+        let map; // Make map accessible in a wider scope
+        let mapInitialized = false;
+        const mapWindow = document.getElementById('map-window');
+        const mapToggleButton = document.querySelector('#map-toggle-button');
+        const navMapLink = document.getElementById('nav-map-link');
+        const closeMapButton = document.querySelector('.window-close-btn');
+        const dataWindow = document.getElementById('data-window');
+        const dataToggleButton = document.querySelector('#data-toggle-button');
+        const closeDataButton = dataWindow.querySelector('.window-close-btn');
+        const filesWindow = document.getElementById('files-window');
+        const filesToggleButton = document.getElementById('files-toggle-button');
+        const closeFilesButton = filesWindow.querySelector('.window-close-btn');
+        const viewSequenceBtn = document.getElementById('view-sequence-btn');
+        const systemOverrideScreen = document.getElementById('system-override-screen');
+        const cmdText = document.getElementById('cmd-text');
+        let dataWindowInitialized = false;
+
+        function arrangeWindows() {
+            const openWindows = [mapWindow, dataWindow, filesWindow].filter(w => w && !w.classList.contains('hidden'));
+            const numOpen = openWindows.length;
+
+            if (numOpen === 0) return;
+
+            if (numOpen === 1) {
+                const win = openWindows[0];
+                // Reset to centered, default size
+                win.style.width = '80vw';
+                win.style.height = '60vh';
+                win.style.maxWidth = '900px';
+                win.style.top = '50%';
+                win.style.left = '50%';
+                win.style.transform = 'translate(-50%, -50%)';
+            } else if (numOpen === 2) {
+                const tileWidth = '48vw';
+                const tileHeight = '80vh';
+                const topPosition = '15vh';
+
+                // Arrange Map Window (left)
+                mapWindow.style.width = tileWidth;
+                mapWindow.style.height = tileHeight;
+                mapWindow.style.maxWidth = 'none';
+                mapWindow.style.top = topPosition;
+                mapWindow.style.left = '1.5vw';
+                mapWindow.style.transform = 'none';
+
+                // Arrange Data Window (right)
+                dataWindow.style.width = tileWidth;
+                dataWindow.style.height = tileHeight;
+                dataWindow.style.maxWidth = 'none';
+                dataWindow.style.top = topPosition;
+                dataWindow.style.left = '50.5vw';
+                dataWindow.style.transform = 'none';
+            } else if (numOpen === 3) {
+                const tileWidth = '32vw';
+                const tileHeight = '80vh';
+                const topPosition = '15vh';
+
+                openWindows.forEach((win, index) => {
+                    win.style.width = tileWidth;
+                    win.style.height = tileHeight;
+                    win.style.maxWidth = 'none';
+                    win.style.top = topPosition;
+                    win.style.left = `${1.5 + index * 33}vw`;
+                    win.style.transform = 'none';
+                });
+            }
+        }
+
+        function toggleMapWindow() {
+            mapWindow.classList.toggle('hidden');
+            if (!mapWindow.classList.contains('hidden') && !mapInitialized) {
+                initMap();
+                mapInitialized = true;
+            }
+            arrangeWindows();
+        }
+
+        function toggleDataWindow() {
+            dataWindow.classList.toggle('hidden');
+            if (!dataWindow.classList.contains('hidden') && !dataWindowInitialized) {
+                initDataWindowAnimations();
+                dataWindowInitialized = true;
+            }
+            arrangeWindows();
+        }
+
+        function toggleFilesWindow() {
+            filesWindow.classList.toggle('hidden');
+            arrangeWindows();
+        }
+
+        if (mapToggleButton) mapToggleButton.addEventListener('click', toggleMapWindow);
+        if (navMapLink) {
+            navMapLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleMapWindow();
+            });
+        }
+        if (closeMapButton) {
+            closeMapButton.addEventListener('click', toggleMapWindow);
+        }
+        if (dataToggleButton) dataToggleButton.addEventListener('click', toggleDataWindow);
+        if (closeDataButton) closeDataButton.addEventListener('click', toggleDataWindow);
+        if (filesToggleButton) filesToggleButton.addEventListener('click', toggleFilesWindow);
+        if (closeFilesButton) closeFilesButton.addEventListener('click', toggleFilesWindow);
+        if (viewSequenceBtn) viewSequenceBtn.addEventListener('click', startSystemSequence);
+
+        function initMap() {
+            // Map initialization
+            map = new Cesium.Viewer('map-container', {
+                imageryProvider: new Cesium.UrlTemplateImageryProvider({
+                    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                    subdomains: ['a', 'b', 'c', 'd'],
+                    credit: 'FRIDAY Intel Map | © OpenStreetMap © CARTO'
+                }),
+                baseLayerPicker: false,
+                geocoder: false,
+                homeButton: false,
+                infoBox: false,
+                sceneModePicker: false,
+                selectionIndicator: false,
+                timeline: false,
+                navigationHelpButton: false,
+                animation: false,
+                skyAtmosphere: new Cesium.SkyAtmosphere()
+            });
+
+            const globe = map.scene.globe;
+            globe.baseColor = Cesium.Color.fromCssColorString('#050505');
+            globe.showGroundAtmosphere = true;
+            globe.enableLighting = true;
+
+            map.scene.screenSpaceCameraController.enableTilt = false;
+
+            // Auto-rotate the globe for surveillance effect
+            map.clock.onTick.addEventListener(function(clock) {
+                map.scene.camera.rotateLeft(0.001);
+                
+                // Update fake HUD numbers
+                if (Math.random() > 0.8) {
+                    document.getElementById('hud-lat').innerText = (Math.random() * 180 - 90).toFixed(4);
+                    document.getElementById('hud-lng').innerText = (Math.random() * 360 - 180).toFixed(4);
+                    document.getElementById('hud-targets').innerText = Math.floor(Math.random() * 50);
+                }
+            });
+        }
+
+        function runAdvancedBootSequence(windowElement) {
+            return new Promise(resolve => {
+                const content = windowElement.querySelector('.window-content');
+                content.innerHTML = '<pre class="boot-text"></pre>';
+                const pre = content.querySelector('.boot-text');
+
+                let speed = 200; // Start slow
+                let acceleration = 0.95;
+                let minSpeed = 16;
+                const duration = 5000;
+                let startTime = Date.now();
+
+                const generateBootLine = () => {
+                    let line = '';
+                    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]{}|;:,.<>?';
+                    for (let i = 0; i < 120; i++) {
+                        line += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    return line;
+                };
+                let bootLines = Array.from({ length: 100 }, generateBootLine);
+
+                function updateText() {
+                    bootLines.shift();
+                    bootLines.push(generateBootLine());
+                    pre.textContent = bootLines.join('\n');
+                }
+
+                function loop() {
+                    if (Date.now() - startTime > duration) {
+                        pre.style.textAlign = 'center';
+                        pre.style.paddingTop = '40%';
+                        pre.style.fontSize = '24px';
+                        pre.style.color = 'var(--accent-green)';
+                        pre.textContent = 'SUCCESSFUL';
+                        resolve();
+                        return;
+                    }
+
+                    updateText();
+
+                    speed = Math.max(minSpeed, speed * acceleration);
+                    setTimeout(loop, speed);
+                }
+
+                loop();
+            });
+        }
+
+        function startSystemSequence() {
+            // 1. Open and arrange windows
+            mapWindow.classList.remove('hidden');
+            dataWindow.classList.remove('hidden');
+            filesWindow.classList.remove('hidden');
+            if (!mapInitialized) { initMap(); mapInitialized = true; }
+            if (!dataWindowInitialized) { initDataWindowAnimations(); dataWindowInitialized = true; }
+            arrangeWindows();
+
+            // 2. Start the new boot sequence
+            const bootPromises = [
+                runAdvancedBootSequence(mapWindow),
+                runAdvancedBootSequence(dataWindow),
+                runAdvancedBootSequence(filesWindow)
+            ];
+
+            Promise.all(bootPromises).then(() => {
+                // 3. All windows show "SUCCESSFUL". Now, turn red.
+                [mapWindow, dataWindow, filesWindow].forEach(win => win.classList.add('red-flash'));
+
+                setTimeout(() => {
+                    // 4. Fade out windows, fade in CMD screen
+                    [mapWindow, dataWindow, filesWindow].forEach(win => {
+                        win.classList.add('hidden');
+                        win.classList.remove('red-flash'); // cleanup
+                    });
+                    
+                    systemOverrideScreen.classList.remove('hidden');
+
+                    // 5. Type "WELCOME"
+                    typeWriter(cmdText, 'WELCOME TO FRIDAY', 100, () => {
+                        // 6. Animate the big, moving eye
+                        setTimeout(animateLargeMovingHackerEye, 500);
+                    });
+
+                }, 500); // Wait a bit after the red flash
+            });
+        }
+
+        function animateLargeMovingHackerEye() {
+            const eyeElement = document.getElementById('cmd-text');
+            const cmdWindow = document.getElementById('cmd-window');
+            if (!eyeElement || !cmdWindow) return;
+
+            // --- 1. Make it fullscreen ---
+            cmdWindow.style.width = '100vw';
+            cmdWindow.style.height = '100vh';
+            cmdWindow.style.maxWidth = 'none';
+            cmdWindow.style.border = 'none';
+            cmdWindow.style.background = '#000';
+            eyeElement.style.fontSize = '1.2vw';
+            eyeElement.style.lineHeight = '1.2vw';
+            eyeElement.style.textAlign = 'center';
+            eyeElement.style.whiteSpace = 'pre';
+
+            // --- 2. Setup animation variables ---
+            const getRandomChunk = (len) => {
+                let s = '';
+                const chars = '0123456789ABCDEF*&#@';
+                for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
+                return s;
+            };
+
+            const eyeTemplate = [
+                "                                .o888888888888888888888888o.                                ",
+                "                             .d88'    %s    `888b.                             ",
+                "                           .d88'      %s      `888b.                           ",
+                "                         .d88'        %s        `888b.                         ",
+                "                         d88'         %s         `88b                         ",
+                "                        d88'          %s          `88b                        ",
+                "                       d88'           %s           `88b                       ",
+                "                      d88'            %s            `88b                      ",
+                "                     d88'             %s             `88b                     ",
+                "                     888                              888                     ", // Line 9 (pupil up)
+                "                     888                              888                     ", // Line 10 (pupil center)
+                "                     888                              888                     ", // Line 11 (pupil down)
+                "                     888                              888                     ", // Line 12
+                "                     d88b.            %s            .d88b                     ", // Line 13
+                "                      d888b.          %s          .d888b                      ", // Line 14
+                "                       `d8888b.       %s       .d8888b'                       ", // Line 15
+                "                         `*88888b.    %s    .d8888b*`                         ", // Line 16
+                "                              `*888888888888*`                              "
+            ];
+
+            const blinkLine = "________________________________________________________________".slice(0, 49);
+            const pupilStates = {
+                center: { left: " ".repeat(15), right: " ".repeat(15) },
+                left:   { left: " ".repeat(5),  right: " ".repeat(25) },
+                right:  { left: " ".repeat(25), right: " ".repeat(5) }
+            };
+            let pupilLook = { x: 'center', y: 'center' };
+            let blinkCounter = 0;
+
+            // --- 3. Mouse Tracking Logic ---
+            const mouseMoveHandler = (e) => {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                const x_third = w / 3;
+                const y_third = h / 3;
+
+                pupilLook.x = (e.clientX < x_third) ? 'left' : (e.clientX > w - x_third) ? 'right' : 'center';
+                pupilLook.y = (e.clientY < y_third) ? 'up' : (e.clientY > h - y_third) ? 'down' : 'center';
+            };
+            window.addEventListener('mousemove', mouseMoveHandler);
+
+            // --- 4. Main Animation Loop ---
+            const animationInterval = setInterval(() => {
+                if (systemOverrideScreen.classList.contains('hidden')) {
+                    clearInterval(animationInterval);
+                    window.removeEventListener('mousemove', mouseMoveHandler);
+                    return;
+                }
+
+                blinkCounter = (blinkCounter + 1) % 200;
+                const isBlinking = blinkCounter > 190;
+
+                // Build the frame
+                let frame = eyeTemplate.map(line => line.includes('%s') ? line.replace('%s', getRandomChunk(30)) : line);
+
+                // Determine pupil position
+                const pupilString = `oO(${getRandomChunk(8)})Oo`;
+                const pupilLineContent = pupilStates[pupilLook.x].left + pupilString + pupilStates[pupilLook.x].right;
+                let verticalStart = 10; // center
+                if (pupilLook.y === 'up') verticalStart = 9;
+                if (pupilLook.y === 'down') verticalStart = 11;
+
+                if (isBlinking) {
+                    frame[verticalStart] = frame[verticalStart].replace(frame[verticalStart].substring(22, 71), blinkLine);
+                } else {
+                    frame[verticalStart] = `                     888 ${pupilLineContent} 888                     `;
+                }
+                
+                eyeElement.textContent = '\n\n\n\n\n' + frame.join('\n');
+            }, 100);
+
+            // --- 5. Click to Close Logic ---
+            systemOverrideScreen.addEventListener('click', () => {
+                clearInterval(animationInterval);
+                window.removeEventListener('mousemove', mouseMoveHandler);
+                systemOverrideScreen.classList.add('hidden');
+                
+                // Reset styles for next time
+                cmdWindow.style.width = '80vw';
+                cmdWindow.style.height = '60vh';
+                cmdWindow.style.maxWidth = '900px';
+                cmdWindow.style.border = '1px solid var(--accent-green)';
+                cmdWindow.style.background = '#050505';
+                eyeElement.style.fontSize = '18px';
+                eyeElement.style.lineHeight = 'normal';
+                eyeElement.style.textAlign = 'left';
+                eyeElement.textContent = '';
+            }, { once: true });
+        }
+
+        // ==========================================
+        // DATA WINDOW ANIMATIONS
+        // ==========================================
+        function initDataWindowAnimations() {
+            const waterfall = document.getElementById('waterfall-content');
+            const waveform = document.getElementById('waveform');
+            const chartGroups = document.querySelectorAll('.bar-charts .chart-group');
+            const psychProfile = document.getElementById('psych-profile');
+            const threatIndex = document.getElementById('threat-index');
+
+            // 1. Waterfall
+            function generateWaterfallLine() {
+                let line = `0x${(Math.random().toString(16) + '0000000').slice(2, 10)}: `;
+                for (let i = 0; i < 8; i++) {
+                    line += Math.random().toString(16).slice(2, 4).toUpperCase() + ' ';
+                }
+                return line;
+            }
+            let waterfallLines = Array.from({ length: 50 }, generateWaterfallLine);
+            
+            setInterval(() => {
+                if (dataWindow.classList.contains('hidden')) return;
+                waterfallLines.shift();
+                waterfallLines.push(generateWaterfallLine());
+                waterfall.textContent = waterfallLines.join('\n');
+            }, 100);
+
+            // 2. Waveform
+            const wavePathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            waveform.appendChild(wavePathElement);
+            function generateWavePath() {
+                const width = waveform.clientWidth;
+                let path = `M 0 75 `;
+                for (let i = 0; i <= width; i += 10) {
+                    const y = 75 + Math.random() * 70 - 35;
+                    path += `L ${i} ${y} `;
+                }
+                return path;
+            }
+            setInterval(() => {
+                if (dataWindow.classList.contains('hidden')) return;
+                wavePathElement.setAttribute('d', generateWavePath());
+            }, 300);
+
+            // 3. Bar charts
+            chartGroups.forEach(group => {
+                for(let i=0; i<5; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.animationDelay = `${Math.random()}s`;
+                    bar.style.animationDuration = `${Math.random() * 0.5 + 0.3}s`;
+                    group.appendChild(bar);
+                }
+            });
+
+            // 4. Status values
+            const profiles = ['CALM', 'AGITATED', 'HOSTILE', 'COMPLIANT', 'EVASIVE'];
+            setInterval(() => {
+                if (dataWindow.classList.contains('hidden')) return;
+                threatIndex.textContent = `${(Math.random() * 10 + 88).toFixed(1)} %`;
+                if (Math.random() > 0.8) {
+                    psychProfile.textContent = profiles[Math.floor(Math.random() * profiles.length)];
+                }
+            }, 1500);
+        }
+
+        // ==========================================
+        // DRAGGABLE & RESIZABLE WINDOW LOGIC
+        // ==========================================
+        function makeWindowInteractive(windowElement) {
+            const header = windowElement.querySelector('.window-header');
+            const resizeHandle = windowElement.querySelector('.resize-handle');
+            let isDragging = false;
+            let isResizing = false;
+            let offsetX, offsetY, startX, startY, startWidth, startHeight;
+
+            // Dragging
+            if (header) {
+                header.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    offsetX = e.clientX - windowElement.getBoundingClientRect().left;
+                    offsetY = e.clientY - windowElement.getBoundingClientRect().top;
+                    windowElement.style.transition = 'none';
+                });
+            }
+
+            // Resizing
+            if (resizeHandle) {
+                resizeHandle.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isResizing = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(windowElement).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(windowElement).height, 10);
+                });
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    windowElement.style.transform = 'none'; // Remove transform for direct positioning
+                    windowElement.style.left = `${e.clientX - offsetX}px`;
+                    windowElement.style.top = `${e.clientY - offsetY}px`;
+                }
+                if (isResizing) {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    const newHeight = startHeight + (e.clientY - startY);
+                    windowElement.style.width = `${newWidth}px`;
+                    windowElement.style.height = `${newHeight}px`;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                isResizing = false;
+                windowElement.style.transition = '';
+            });
+        }
+        if (mapWindow) makeWindowInteractive(mapWindow);
+        if (dataWindow) makeWindowInteractive(dataWindow);
+        if (filesWindow) makeWindowInteractive(filesWindow);
+
+        // ==========================================
         // TYPEWRITER EFFECT (Optional Enhancement)
         // ==========================================
-        function typeWriter(element, text, speed = 50) {
+        function typeWriter(element, text, speed = 50, callback) {
             let i = 0;
             element.textContent = '';
             
@@ -1149,6 +2182,8 @@
                     element.textContent += text.charAt(i);
                     i++;
                     setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
                 }
             }
             
