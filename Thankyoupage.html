@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRIDAY · Acknowledgements</title>
+
+    <style>
+        /* OCR A Extended – Fallback via monospace */
+        @font-face {
+            font-family: "OCR A Extended";
+            src: local("OCR A Extended"), local("OCR A Std");
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --text-primary: #e0e0e0;
+            --text-secondary: #8a8a8a;
+            --accent-green: #00ff88;
+            --accent-red: #ff3333;
+            --grid-color: rgba(255,255,255,0.03);
+            --glow-green: rgba(0,255,136,0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "OCR A Extended", monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* Background */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            from { background-position: 0 0; }
+            to { background-position: 50px 50px; }
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(
+                to bottom,
+                transparent,
+                rgba(0,255,136,0.5),
+                transparent
+            );
+            z-index: 10;
+            animation: scan 7s linear infinite;
+        }
+
+        @keyframes scan {
+            from { transform: translateY(0); }
+            to { transform: translateY(100vh); }
+        }
+
+        /* Layout */
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 140px 40px 120px;
+        }
+
+        /* Header */
+        .title {
+            font-size: 72px;
+            letter-spacing: 12px;
+            color: var(--text-primary);
+            text-shadow: 0 0 30px var(--glow-green);
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            letter-spacing: 4px;
+            color: var(--accent-green);
+            margin-bottom: 60px;
+        }
+
+        .message {
+            max-width: 900px;
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 100px;
+        }
+
+        .message strong {
+            color: var(--accent-red);
+        }
+
+        /* Names */
+        .names-title {
+            font-size: 32px;
+            letter-spacing: 6px;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+        }
+
+        .names-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 60px;
+        }
+
+        .name {
+            font-size: 15px;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            padding: 6px 0;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .name:hover {
+            color: var(--accent-green);
+            text-shadow: 0 0 10px var(--glow-green);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 120px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 3px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .names-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .title {
+                font-size: 48px;
+                letter-spacing: 8px;
+            }
+
+            .names-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid-overlay"></div>
+    <div class="scanline"></div>
+
+    <main class="container">
+        <h1 class="title">FRIDAY</h1>
+        <p class="subtitle">// MANAGEMENT ACKNOWLEDGEMENT</p>
+
+        <div class="message">
+            On behalf of the <strong>FRIDAY Management Team</strong>, we extend our deepest
+            gratitude to the individuals listed below.  
+            Your dedication, trust, feedback, and belief in this project made FRIDAY
+            possible. This system is not built by code alone — it is built by people
+            who dared to support an idea before it was proven.
+        </div>
+
+        <h2 class="names-title">// THANK YOU</h2>
+
+        <div class="names-grid">
+            <div class="name">Alexander Novak</div>
+            <div class="name">Sofia Martinez</div>
+            <div class="name">Liam O'Connor</div>
+
+            <div class="name">Hannah Weiss</div>
+            <div class="name">Marco Bianchi</div>
+            <div class="name">Elena Petrova</div>
+
+            <div class="name">Jonas Müller</div>
+            <div class="name">Nina Kovac</div>
+            <div class="name">David Chen</div>
+
+            <div class="name">Lucas Ferreira</div>
+            <div class="name">Anna Johansson</div>
+            <div class="name">Milan Horvat</div>
+
+            <div class="name">Sarah Thompson</div>
+            <div class="name">Tomáš Novák</div>
+            <div class="name">Isabelle Laurent</div>
+
+            <div class="name">Alexander Novak</div>
+        <div class="name">Sofia Martinez</div>
+        <div class="name">Liam O'Connor</div>
+
+        <div class="name">Hannah Weiss</div>
+        <div class="name">Marco Bianchi</div>
+        <div class="name">Elena Petrova</div>
+
+        <div class="name">Jonas Müller</div>
+        <div class="name">Nina Kovac</div>
+        <div class="name">David Chen</div>
+
+        <div class="name">Lucas Ferreira</div>
+        <div class="name">Anna Johansson</div>
+        <div class="name">Milan Horvat</div>
+
+        <div class="name">Sarah Thompson</div>
+        <div class="name">Tomáš Novák</div>
+        <div class="name">Isabelle Laurent</div>
+
+        <div class="name">Michael Stein</div>
+        <div class="name">Laura Rossi</div>
+        <div class="name">Andrej Markovic</div>
+
+        <div class="name">Daniel Fischer</div>
+        <div class="name">Paula Gómez</div>
+        <div class="name">Robert Klein</div>
+
+        <div class="name">Eva Lindström</div>
+        <div class="name">Nikola Petrovic</div>
+        <div class="name">Benjamin Hart</div>
+
+        <div class="name">Clara Moreau</div>
+        <div class="name">Stefan Bauer</div>
+        <div class="name">Yuki Tanaka</div>
+
+        <div class="name">Julian Richter</div>
+        <div class="name">Maria Santos</div>
+        <div class="name">Felix Wagner</div>
+
+        <div class="name">Noah Bernstein</div>
+        <div class="name">Katarina Ilic</div>
+        <div class="name">Victor Dubois</div>
+
+        <div class="name">Leonhard Krüger</div>
+        <div class="name">Camila Rojas</div>
+        <div class="name">Thomas Schneider</div>
+
+        <div class="name">Adrian Popescu</div>
+        <div class="name">Olivia Brown</div>
+        <div class="name">Pavel Dvorak</div>
+
+        <div class="name">Samuel Cohen</div>
+        <div class="name">Irina Mikhailova</div>
+        <div class="name">Henrik Sørensen</div>
+
+        <div class="name">Maximilian Huber</div>
+        <div class="name">Ana Kovačević</div>
+        <div class="name">Jean-Pierre Martin</div>
+
+        <div class="name">Filip Nowak</div>
+        <div class="name">Beatrice Conti</div>
+        <div class="name">Oskar Nilsson</div>
+
+        <div class="name">Rafael Almeida</div>
+        <div class="name">Zoe Campbell</div>
+        <div class="name">Andreas Hofer</div>
+
+        <div class="name">Matteo Ricci</div>
+        <div class="name">Emily Turner</div>
+        <div class="name">Viktor Szabo</div>
+
+        <div class="name">Sebastian Koch</div>
+        <div class="name">Lena Hoffmann</div>
+        <div class="name">Arman Khalil</div>
+
+        <div class="name">Daniel Novak</div>
+        <div class="name">Julia Meier</div>
+        <div class="name">Tobias Lang</div>
+
+        <div class="name">Karim El-Sayed</div>
+        <div class="name">Sophie Dubreuil</div>
+        <div class="name">Martin Polak</div>
+
+        <div class="name">Jan Vermeer</div>
+        <div class="name">Chiara Lombardi</div>
+        <div class="name">Ethan Walker</div>
+
+        <div class="name">Aleksandar Jovanovic</div>
+        <div class="name">Maya Patel</div>
+        <div class="name">Florian Beck</div>
+
+        <div class="name">Niels Petersen</div>
+        <div class="name">Alicia Moreno</div>
+        <div class="name">Boris Ivanov</div>
+
+        <div class="name">Lukas Brandner</div>
+        <div class="name">Natalie Fischer</div>
+        <div class="name">George Papadopoulos</div>
+
+        <div class="name">Ricardo Silva</div>
+        <div class="name">Emma Wilson</div>
+        <div class="name">Denis Vukovic</div>
+
+        <div class="name">Oliver Grant</div>
+        <div class="name">Petra Horváth</div>
+        <div class="name">Jakob Steiner</div>
+
+
+            <!-- einfach weiter kopieren -->
+        </div>
+
+        <footer>
+            © 2026 FRIDAY · BUILT WITH TRUST · POWERED BY PEOPLE
+        </footer>
+    </main>
+</body>
+</html>

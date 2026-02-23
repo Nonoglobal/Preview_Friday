@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveillance Terminal</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --main-color: #00ff88; /* Changed to green for consistency */
+            --bg-color: #000;
+            --border-color: #444;
+            --pane-bg-color: #0a0a0a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--main-color);
+            font-family: 'Share Tech Mono', monospace;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        .header {
+            background-color: var(--border-color);
+            color: var(--bg-color);
+            font-weight: bold;
+            padding: 4px;
+            text-align: center;
+            font-size: 1em;
+            text-shadow: 0 0 5px var(--main-color);
+            letter-spacing: 2px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        #main-layout {
+            display: grid;
+            grid-template-areas: 
+                "top top top"
+                "left center right"
+                "bottom bottom bottom";
+            grid-template-rows: 120px 1fr 120px;
+            grid-template-columns: 250px 1fr 250px;
+            gap: 5px;
+            padding: 5px;
+            padding-top: 40px; /* Platz für den Header */
+            height: calc(100vh - 48px); /* Volle Höhe minus Padding und Header */
+            box-sizing: border-box;
+            width: 100vw;
+        }
+
+        .zone {
+            display: flex;
+            gap: 5px;
+            overflow: hidden;
+        }
+
+        .zone-top, .zone-bottom {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .zone-left, .zone-right {
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .pane {
+            border: 1px solid var(--border-color);
+            background-color: var(--pane-bg-color);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Center Map Styling */
+        .zone-center {
+            grid-area: center;
+            border: 1px solid var(--main-color);
+            position: relative;
+            background-color: #000510;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 40, 20, 0.3) 0%, transparent 70%),
+                linear-gradient(0deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            box-shadow: inset 0 0 50px rgba(0, 255, 136, 0.1);
+            overflow: hidden;
+        }
+
+        .pane-title {
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            color: var(--main-color);
+            text-shadow: 0 0 3px var(--main-color);
+        }
+
+        .pane-content {
+            flex-grow: 1;
+            overflow: hidden;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        /* Terminal-spezifisches Styling */
+        #terminal-output {
+            height: 100%;
+            overflow-y: hidden;
+        }
+
+        #terminal-output span {
+            display: block;
+        }
+
+        #terminal-output .cursor::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Widget-Styling */
+        .zone-top { grid-area: top; }
+        .zone-bottom { grid-area: bottom; }
+        .zone-left { grid-area: left; }
+        .zone-right { grid-area: right; }
+
+        .pane { flex: 1; }
+
+        .map-target {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: var(--main-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--main-color), 0 0 20px var(--main-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(0.8); opacity: 1; }
+        }
+
+        .waveform-widget svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .waveform-widget .line {
+            stroke: var(--main-color);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .status-bar {
+            width: 100%;
+            height: 15px;
+            border: 1px solid var(--main-color);
+            margin-bottom: 5px;
+        }
+        .status-bar-inner {
+            height: 100%;
+            background-color: var(--main-color);
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Leaflet Customization */
+        #map {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+        .leaflet-control-container {
+            display: none !important;
+        }
+        .leaflet-container {
+            background: #000;
+        }
+
+        /* Loading Overlay */
+        #loading-overlay {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: auto;
+            padding: 20px;
+            background: rgba(0, 15, 5, 0.95);
+            border: 1px solid var(--main-color);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Share Tech Mono', monospace;
+            transition: opacity 1s ease-out;
+            cursor: move;
+        }
+        #loading-text {
+            font-size: 1.5em;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+        #loading-topics {
+            font-size: 0.9em;
+            color: #aaa;
+            height: 150px;
+            overflow: hidden;
+            text-align: center;
+        }
+        #view-reports-btn {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2em;
+            color: #000;
+            background: var(--main-color);
+            padding: 15px 40px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            display: none; /* Initially hidden */
+        }
+
+        /* Report Swarm Styles */
+        #report-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5000;
+            pointer-events: none;
+            display: none;
+        }
+        
+        .report-item {
+            position: absolute;
+            width: 300px;
+            background: rgba(0, 20, 10, 0.9);
+            border: 1px solid var(--main-color);
+            padding: 5px;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .report-item.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .report-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .report-caption {
+            font-size: 10px;
+            color: var(--main-color);
+            padding: 5px;
+            background: #000;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        LIVE ÜBERTRAGUNG :: MOMENTANER SERVER :: SICHERER KANAL
+    </div>
+
+    <div id="main-layout">
+        <div class="zone zone-top" id="zone-top"></div>
+        <div class="zone zone-left" id="zone-left"></div>
+        
+        <div class="zone-center" id="zone-center">
+            <div id="map"></div>
+            <div id="loading-overlay">
+                <div id="loading-text">LOADING DATA...</div>
+                <div id="loading-topics"></div>
+                <button id="view-reports-btn">View Reports</button>
+            </div>
+        </div>
+        
+        <div class="zone zone-right" id="zone-right"></div>
+        <div class="zone zone-bottom" id="zone-bottom"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Helper to create panes in zones
+            function fillZone(zoneId, count) {
+                const zone = document.getElementById(zoneId);
+                const createdPanes = [];
+                for(let i=0; i<count; i++) {
+                const pane = document.createElement('div');
+                pane.className = 'pane';
+                    pane.id = `pane-${zoneId}-${i}`;
+                    zone.appendChild(pane);
+                    createdPanes.push(pane);
+                }
+                return createdPanes;
+            }
+
+            // Create layout structure
+            const topPanes = fillZone('zone-top', 4);
+            const bottomPanes = fillZone('zone-bottom', 4);
+            const leftPanes = fillZone('zone-left', 3);
+            const rightPanes = fillZone('zone-right', 3);
+            
+            const allPanes = [...topPanes, ...bottomPanes, ...leftPanes, ...rightPanes];
+            
+            // Center Map Logic
+            const centerZone = document.getElementById('zone-center');
+            initializeInteractiveMap(centerZone);
+            startLoadingSequence();
+            makeDraggable(document.getElementById('loading-overlay'));
+            document.getElementById('view-reports-btn').addEventListener('click', startReportSwarm);
+            
+            // Liste der möglichen "Widgets" für die Fenster
+            const widgetGenerators = [
+                createHexDumpWidget,
+                createBinaryScrollWidget,
+                createStatusWidget,
+                createWaveformWidget,
+                createBarsWidget,
+                createCodeSnippetWidget,
+                createLogWidget
+            ];
+
+            // Initialize Terminal in Top Left
+            initializeTerminal(topPanes[0]);
+
+            // Fill rest with random widgets
+            const remainingPanes = allPanes.filter(p => p !== topPanes[0]);
+            remainingPanes.forEach(pane => {
+                const randomGenerator = widgetGenerators[Math.floor(Math.random() * widgetGenerators.length)];
+                randomGenerator(pane);
+            });
+
+            // 4. Starte einen Timer, der zufällig Fensterinhalte austauscht für mehr Dynamik
+            setInterval(() => {
+                const paneToUpdate = remainingPanes[Math.floor(Math.random() * remainingPanes.length)];
+                const randomGenerator = widgetGenerators[Math.floor(Math.random() * widgetGenerators.length)];
+                randomGenerator(paneToUpdate);
+            }, 6000); // Slower update cycle
+
+        });
+
+        // --- WIDGET GENERATOREN ---
+
+        function clearPane(pane) {
+            pane.innerHTML = '';
+            pane.className = 'pane'; // Setzt Klassen zurück
+        }
+
+        function createPaneHeader(pane, title) {
+            const titleEl = document.createElement('div');
+            titleEl.className = 'pane-title';
+            titleEl.textContent = title;
+            pane.appendChild(titleEl);
+            const contentEl = document.createElement('div');
+            contentEl.className = 'pane-content';
+            pane.appendChild(contentEl);
+            return contentEl;
+        }
+
+        function initializeInteractiveMap(container) {
+            const map = L.map('map', {
+                center: [20, 0],
+                zoom: 2,
+                maxBounds: [[-90, -180], [90, 180]], // Prevent scrolling off the world
+                worldCopyJump: true
+            });
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19,
+                minZoom: 2
+            }).addTo(map);
+
+            // Add random pulsing targets
+            for (let i = 0; i < 8; i++) {
+                const lat = Math.random() * 170 - 85;
+                const lng = Math.random() * 360 - 180;
+                const color = Math.random() > 0.5 ? '#ff3333' : '#00ff88';
+                const iconHtml = `<div class="map-target" style="background-color: ${color}; box-shadow: 0 0 10px ${color}, 0 0 20px ${color}; animation-delay: ${Math.random()}s;"></div>`;
+                const customIcon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: iconHtml,
+                    iconSize: [12, 12]
+                });
+                L.marker([lat, lng], { icon: customIcon }).addTo(map);
+            }
+        }
+
+        function createHexDumpWidget(pane) {
+            clearPane(pane);
+            const content = createPaneHeader(pane, 'MEMORY DUMP (HEX)');
+            let interval = setInterval(() => {
+                if (!document.body.contains(pane)) {
+                    clearInterval(interval);
+                    return;
+                }
+                let line = '';
+                for (let i = 0; i < 16; i++) {
+                    line += Math.floor(Math.random() * 256).toString(16).padStart(2, '0') + ' ';
+                }
+                const lineEl = document.createElement('div');
+                lineEl.textContent = line;
+                content.appendChild(lineEl);
+                if (content.children.length > 20) {
+                    content.removeChild(content.firstChild);
+                }
+            }, 500); // Slower
+        }
+
+        function createBinaryScrollWidget(pane) {
+            clearPane(pane);
+            const content = createPaneHeader(pane, 'DATENSTROM (BINÄR)');
+            let interval = setInterval(() => {
+                if (!document.body.contains(pane)) {
+                    clearInterval(interval);
+                    return;
+                }
+                content.textContent = Array.from({ length: 500 }, () => Math.round(Math.random())).join('');
+            }, 400); // Slower
+        }
+
+        function createStatusWidget(pane) {
+            clearPane(pane);
+            const content = createPaneHeader(pane, 'SYSTEMSTATUS');
+            content.innerHTML = `
+                <div>CPU-LAST: <span id="cpu-${pane.id}"></span>%</div>
+                <div>SPEICHER: <span id="mem-${pane.id}"></span>%</div>
+                <div>NETZWERK: <span id="net-${pane.id}"></span> Kb/s</div>
+            `;
+            let interval = setInterval(() => {
+                if (!document.body.contains(pane)) {
+                    clearInterval(interval);
+                    return;
+                }
+                document.getElementById(`cpu-${pane.id}`).textContent = (Math.random() * 20 + 80).toFixed(2);
+                document.getElementById(`mem-${pane.id}`).textContent = (Math.random() * 30 + 65).toFixed(2);
+                document.getElementById(`net-${pane.id}`).textContent = Math.floor(Math.random() * 5000 + 8000);
+            }, 2000); // Slower
+        }
+
+        function createWaveformWidget(pane) {
+            clearPane(pane);
+            pane.classList.add('waveform-widget');
+            const content = createPaneHeader(pane, 'SIGNALANALYSE');
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('class', 'line');
+            svg.appendChild(path);
+            content.appendChild(svg);
+
+            let interval = setInterval(() => {
+                if (!document.body.contains(pane)) {
+                    clearInterval(interval);
+                    return;
+                }
+                const width = svg.clientWidth;
+                const height = svg.clientHeight;
+                let d = 'M 0 ' + (height / 2);
+                for (let i = 0; i < width; i += 10) {
+                    d += ` L ${i} ${height / 2 + (Math.random() - 0.5) * height}`;
+                }
+                path.setAttribute('d', d);
+            }, 600); // Slower
+        }
+
+        function createBarsWidget(pane) {
+            clearPane(pane);
+            const content = createPaneHeader(pane, 'ENERGIEVERTEILUNG');
+            for(let i=0; i<3; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'status-bar';
+                const inner = document.createElement('div');
+                inner.className = 'status-bar-inner';
+                bar.appendChild(inner);
+                content.appendChild(bar);
+            }
+            let interval = setInterval(() => {
+                if (!document.body.contains(pane)) {
+                    clearInterval(interval);
+                    return;
+                }
+                content.querySelectorAll('.status-bar-inner').forEach(bar => {
+                    bar.style.width = `${Math.random() * 100}%`;
+                });
+            }, 1200); // Slower
+        }
+
+        function createCodeSnippetWidget(pane) {
+            clearPane(pane);
+            const content = createPaneHeader(pane, 'DECRYPTION ALGORITHM');
+            const code = `
+def decrypt(cipher_text, key):
+    plain_text = ""
+    for char in cipher_text:
+        if char.isalpha():
+            shifted = ord(char) - key
+            if char.islower():
+                if shifted < ord('a'):
+                    shifted += 26
+            elif char.isupper():
+                if shifted < ord('A'):
+                    shifted += 26
+            plain_text += chr(shifted)
+        else:
+            plain_text += char
+    return plain_text
+            `;
+            const pre = document.createElement('pre');
+            pre.style.fontSize = '0.8em';
+            pre.textContent = code;
+            content.appendChild(pre);
+        }
+
+        function createLogWidget(pane) {
+            clearPane(pane);
+            const content = createPaneHeader(pane, 'SYSTEM LOG');
+            const events = ["AUTH_FAIL", "SYS_CALL", "NET_PING", "ACCESS_OK", "PROC_KILL"];
+            let interval = setInterval(() => {
+                if (!document.body.contains(pane)) {
+                    clearInterval(interval);
+                    return;
+                }
+                const time = new Date().toLocaleTimeString();
+                const event = events[Math.floor(Math.random() * events.length)];
+                const lineEl = document.createElement('div');
+                lineEl.textContent = `${time} :: ${event}`;
+                content.appendChild(lineEl);
+                if (content.children.length > 10) {
+                    content.removeChild(content.firstChild);
+                }
+            }, 1500);
+        }
+
+        // --- TERMINAL LOGIK ---
+
+        function initializeTerminal(pane) {
+            const content = createPaneHeader(pane, 'HAUPTTERMINAL - LIVE ANALYSE');
+            const output = document.createElement('div');
+            output.id = 'terminal-output';
+            content.appendChild(output);
+
+            const actions = ["Analysiere", "Initialisiere", "Umgehe", "Dekompiliere", "Greife zu auf", "Suche Schwachstelle in", "Verbinde mit", "Isoliere Prozess", "Extrahiere Daten von"];
+            const targets = ["Firewall-Cluster 7", "Satelliten-Uplink 4B", "Quanten-Verschlüsselung", "Server-Knoten 8A", "Admin-Backdoor", "Protokoll-Handler", "Datenbank 'KRYPTON'", "Proxy-Kette", "Root-Verzeichnis"];
+            const results = ["ERFOLGREICH", "ZUGRIFF GEWÄHRT", "FEHLGESCHLAGEN", "TIMEOUT", "ABGEBROCHEN", "PAKETVERLUST", "UMGELEITET", "ABGESCHLOSSEN"];
+
+            function typeLine() {
+                const action = actions[Math.floor(Math.random() * actions.length)];
+                const target = targets[Math.floor(Math.random() * targets.length)];
+                const result = results[Math.floor(Math.random() * results.length)];
+                const line = `${action} ${target}...`;
+
+                const lineEl = document.createElement('span');
+                output.appendChild(lineEl);
+
+                // Zeile "tippen"
+                let i = 0;
+                function typeChar() {
+                    if (i < line.length) {
+                        lineEl.textContent += line.charAt(i);
+                        i++;
+                        setTimeout(typeChar, 10 + Math.random() * 20);
+                    } else {
+                        // Ergebnis nach kurzer Pause anzeigen
+                        setTimeout(() => {
+                            lineEl.textContent += ` [${result}]`;
+                            if (output.children.length > 20) {
+                                output.removeChild(output.firstChild);
+                            }
+                            // Nächste Zeile starten
+                            setTimeout(typeLine, 100 + Math.random() * 400);
+                        }, 200 + Math.random() * 300);
+                    }
+                }
+                typeChar();
+            }
+            typeLine(); // Erste Zeile starten
+        }
+
+        // --- LOADING SEQUENCE LOGIC ---
+
+        function startLoadingSequence() {
+            const overlay = document.getElementById('loading-overlay');
+            const topicsContainer = document.getElementById('loading-topics');
+            const loadingText = document.getElementById('loading-text');
+            const viewBtn = document.getElementById('view-reports-btn');
+
+            const topics = [
+                "Global Supply Chains", "Energy Market Futures", "Geopolitical Risk Indices",
+                "Emerging Market Bonds", "Currency Exchange Volatility", "Sovereign Debt Analysis",
+                "Commodity Price Tracking", "Inflation Rate Projections", "Central Bank Policies",
+                "Equity Market Correlations", "Cybersecurity Threat Vectors", "Rare Earth Mineral-Trades"
+            ];
+
+            let topicIndex = 0;
+            const topicInterval = setInterval(() => {
+                if (topicIndex < topics.length) {
+                    const topicEl = document.createElement('div');
+                    topicEl.textContent = `> ${topics[topicIndex]}`;
+                    topicsContainer.appendChild(topicEl);
+                    topicsContainer.scrollTop = topicsContainer.scrollHeight;
+                    topicIndex++;
+                } else {
+                    clearInterval(topicInterval);
+                }
+            }, 400);
+
+            const randomLoadTime = Math.random() * 5000 + 7000; // 7-12 seconds
+            setTimeout(() => {
+                clearInterval(topicInterval);
+                loadingText.textContent = "DATA LOAD COMPLETE";
+                topicsContainer.style.display = 'none';
+                viewBtn.style.display = 'block';
+            }, randomLoadTime);
+        }
+
+        function makeDraggable(element) {
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            element.addEventListener('mousedown', (e) => {
+                if(e.target.tagName === 'BUTTON') return;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                const rect = element.getBoundingClientRect();
+                const parentRect = element.offsetParent.getBoundingClientRect();
+                
+                element.style.transform = 'none';
+                element.style.left = (rect.left - parentRect.left) + 'px';
+                element.style.top = (rect.top - parentRect.top) + 'px';
+                
+                initialLeft = parseFloat(element.style.left);
+                initialTop = parseFloat(element.style.top);
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                element.style.left = (initialLeft + dx) + 'px';
+                element.style.top = (initialTop + dy) + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+        }
+
+        // --- REPORT SWARM LOGIC ---
+        function startReportSwarm() {
+            const overlay = document.createElement('div');
+            overlay.id = 'report-overlay';
+            document.body.appendChild(overlay);
+            overlay.style.display = 'block';
+            
+            // Hide loading
+            document.getElementById('loading-overlay').style.display = 'none';
+
+            const totalImages = 27;
+            let deck = [];
+            function createAndShuffleDeck() {
+                deck = [];
+                // Create deck: 3 copies of each image index to ensure each appears 3 times
+                for (let i = 1; i <= totalImages; i++) {
+                    deck.push(i); deck.push(i); deck.push(i);
+                }
+                // Shuffle deck
+                deck.sort(() => Math.random() - 0.5);
+            }
+            createAndShuffleDeck();
+
+            const maxConcurrent = 40;
+            const activeElements = [];
+            let spawnIndex = 0;
+
+            const spawnInterval = setInterval(() => {
+                // If deck is exhausted, reshuffle and start over
+                if (spawnIndex >= deck.length) {
+                    spawnIndex = 0;
+                    createAndShuffleDeck();
+                }
+
+                // Remove oldest if limit is reached
+                if (activeElements.length >= maxConcurrent) {
+                    const elToRemove = activeElements.shift();
+                    elToRemove.style.opacity = '0';
+                    elToRemove.style.transform = 'scale(1.5)'; // Explode out effect
+                    setTimeout(() => {
+                        if (elToRemove.parentNode) elToRemove.parentNode.removeChild(elToRemove);
+                    }, 300);
+                }
+
+                // Spawn new
+                const imgIdx = deck[spawnIndex];
+                const el = createReportItem(imgIdx);
+                
+                // Random Position
+                const x = Math.random() * (window.innerWidth - 320);
+                const y = Math.random() * (window.innerHeight - 250);
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+                
+                overlay.appendChild(el);
+                
+                // Trigger animation
+                requestAnimationFrame(() => {
+                    el.classList.add('visible');
+                });
+                
+                activeElements.push(el);
+                spawnIndex++;
+
+            }, 120); // Speed of swarm (ms)
+        }
+
+        function createReportItem(index) {
+            const div = document.createElement('div');
+            div.className = 'report-item';
+            
+            const img = document.createElement('img');
+            img.src = `1 (${index}).jpg`; // Assumes .jpg extension
+            img.alt = `Report ${index}`;
+            
+            const caption = document.createElement('div');
+            caption.className = 'report-caption';
+            caption.innerHTML = `REPORT_ID_${1000+index} :: CLASSIFIED<br>SUBJ: TARGET_${index}`;
+            
+            div.appendChild(img);
+            div.appendChild(caption);
+            return div;
+        }
+
+    </script>
+</body>
+</html>
