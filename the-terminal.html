@@ -349,8 +349,8 @@
         <button id="start-btn">Start Now</button>
     </div>
 
-    <!-- Video Element (Ensure 1.mp4 is in the folder) -->
-    <video id="intro-video" src="1.mp4"></video>
+    <!-- YouTube Player Placeholder -->
+    <div id="intro-video"></div>
 
     <div id="skip-container">
         <div id="skip-text">HOLD SPACE TO SKIP (5s)</div>
@@ -366,12 +366,46 @@
     <div id="window-container"></div>
 
     <script>
+        // YouTube API Setup
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('intro-video', {
+                height: '100%',
+                width: '100%',
+                videoId: '0P1imykOlaQ',
+                playerVars: {
+                    'playsinline': 1,
+                    'controls': 0,
+                    'rel': 0,
+                    'showinfo': 0,
+                    'modestbranding': 1,
+                    'iv_load_policy': 3,
+                    'fs': 0
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                if (window.triggerFridayHope) window.triggerFridayHope();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const startBtn = document.getElementById('start-btn');
             const initialContainer = document.getElementById('initial-container');
             const windowContainer = document.getElementById('window-container');
             const numWindows = 10;
             let secondClickTriggered = false;
+
+            // Load YouTube API
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
             const contentGenerators = [
                 generateHexDump,
@@ -553,26 +587,24 @@
             }
 
             function startVideoSequence() {
-                const video = document.getElementById('intro-video');
+                const videoFrame = document.getElementById('intro-video');
                 const windows = document.querySelectorAll('.popup-window');
                 
                 // 1. Make windows transparent
                 windows.forEach(win => win.classList.add('transparent-mode'));
                 
                 // 2. Bring video forward (visually)
-                video.style.opacity = '1';
-                video.style.transform = 'scale(1)'; // Zoom in effect
+                videoFrame.style.opacity = '1';
+                videoFrame.style.transform = 'scale(1)'; // Zoom in effect
                 
                 // 3. Scatter just before impact (2.5s into the 3s transition)
                 setTimeout(() => {
                     scatterWindows();
-                    video.style.zIndex = '100'; // Above everything
-                    video.play().catch(e => console.log("Autoplay prevented:", e));
+                    videoFrame.style.zIndex = '100'; // Above everything
+                    if (player && typeof player.playVideo === 'function') {
+                        player.playVideo();
+                    }
                     initSkipLogic();
-                    
-                    video.addEventListener('ended', () => {
-                        showFridayHope();
-                    });
                 }, 2500);
             }
 
@@ -634,13 +666,13 @@
             }
 
             function showFridayHope() {
-                const video = document.getElementById('intro-video');
+                const videoFrame = document.getElementById('intro-video');
                 const skipContainer = document.getElementById('skip-container');
                 const fridayText = document.getElementById('friday-hope');
                 const continueContainer = document.getElementById('continue-container');
 
-                video.style.transition = 'opacity 1s ease';
-                video.style.opacity = '0';
+                videoFrame.style.transition = 'opacity 1s ease';
+                videoFrame.style.opacity = '0';
                 skipContainer.style.opacity = '0';
 
                 setTimeout(() => {
@@ -652,6 +684,9 @@
                     }, 2000);
                 }, 1000);
             }
+            
+            // Expose for YouTube API
+            window.triggerFridayHope = showFridayHope;
 
             // --- CONTENT GENERATOR FUNCTIONS ---
             // These create the detailed surveillance content
