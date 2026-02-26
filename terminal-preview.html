@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRIDAY // SURVEILLANCE GRID</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&v=weekly&callback=initMap" defer></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000000;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888888;
+            --accent-red: #ff3333;
+            --accent-green: #00ff88;
+            --glow-green: rgba(0, 255, 136, 0.3);
+            --border-color: rgba(255, 255, 255, 0.05);
+            --window-border: #00ff88;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            overflow: hidden;
+            cursor: crosshair;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .back-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: var(--accent-green);
+            text-decoration: none;
+            z-index: 2000;
+            font-size: 12px;
+            letter-spacing: 2px;
+            border: 1px solid var(--accent-green);
+            padding: 5px 10px;
+            background: #000;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+        }
+        .back-link:hover {
+            opacity: 1;
+            background: var(--accent-green);
+            color: var(--bg-darker);
+        }
+
+        /* GRID LAYOUT */
+        #surveillance-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 100vw;
+            height: 100vh;
+            gap: 1px;
+            background: #111; /* Gap color */
+        }
+
+        .module {
+            background: #050505;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s, z-index 0s;
+        }
+
+        /* Special Spans */
+        .span-2-col { grid-column: span 2; }
+        .span-2-row { grid-row: span 2; }
+        .span-map { grid-column: 2 / 4; grid-row: 1 / 3; } /* Center Map */
+
+        /* DRAG HANDLE & WINDOW TRANSFORMATION */
+        .module-header {
+            height: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 10px;
+            color: var(--text-secondary);
+            cursor: grab;
+            transition: background 0.2s, color 0.2s;
+            user-select: none;
+        }
+
+        .module:hover .module-header {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent-green);
+        }
+
+        .module.detached {
+            position: absolute;
+            z-index: 1000;
+            border: 1px solid var(--accent-green);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
+            animation: detachPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .module.detached .module-header {
+            background: var(--accent-green);
+            color: #000;
+            cursor: grabbing;
+        }
+
+        body.module-focused #surveillance-grid > .module:not(.focused) {
+            pointer-events: none;
+            opacity: 0.1;
+            filter: blur(2px);
+        }
+
+        .module.focused {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 5000;
+            transition: all 0.4s ease-in-out !important;
+        }
+
+        @keyframes detachPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .module-content {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* CONTENT STYLES */
+        #map-container {
+            width: 100%;
+            height: 100%;
+            background: #080808;
+        }
+
+        .text-feed {
+            padding: 10px;
+            font-size: 10px;
+            color: var(--text-secondary);
+            white-space: pre;
+            overflow-y: hidden;
+            line-height: 1.4;
+        }
+
+        .cctv-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            filter: grayscale(100%) contrast(1.2);
+            transition: opacity 0.5s;
+        }
+
+        .cctv-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: var(--accent-red);
+            font-size: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 5px;
+        }
+
+        .graph-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 100%;
+            padding: 10px;
+            gap: 2px;
+        }
+        .graph-bar {
+            width: 100%;
+            background: var(--accent-green);
+            opacity: 0.3;
+            transition: height 0.2s;
+        }
+
+        /* New styles for detailed data panels */
+        .data-list {
+            padding: 10px;
+            font-size: 11px;
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .data-row span:first-child {
+            color: var(--text-secondary);
+        }
+        .text-green { color: var(--accent-green); }
+        .text-red { color: var(--accent-red); }
+    </style>
+</head>
+<body>
+
+    <a href="friday-v5-index.html" class="back-link">[ EXIT TERMINAL ]</a>
+
+    <div id="surveillance-grid">
+        <!-- 1. Top Left: System Log -->
+        <div class="module">
+            <div class="module-header">SYS.LOG // KERNEL</div>
+            <div class="module-content text-feed" id="feed-log"></div>
+        </div>
+
+        <!-- 2. Map (Spans 2 cols, 2 rows) -->
+        <div class="module span-map" id="map-module">
+            <div class="module-header">GLOBAL.TRACKER // SATELLITE LINK</div>
+            <div class="module-content">
+                <div id="map-container"></div>
+            </div>
+        </div>
+
+        <!-- 3. Top Right: CCTV 1 -->
+        <div class="module">
+            <div class="module-header">CAM_01 // ARCHIVE</div>
+            <div class="module-content">
+                <div class="cctv-overlay">REC ●</div>
+                <img src="" class="cctv-feed" id="cctv-1" alt="NO SIGNAL">
+            </div>
+        </div>
+
+        <!-- 4. Mid Left: Subject Profile -->
+        <div class="module" id="profile-module">
+            <div class="module-header">SUBJECT PROFILE // ID: 73A-DELTA</div>
+            <div class="module-content data-list">
+                <div class="data-row"><span>ALIAS:</span> <span id="profile-alias">NIGHTHAWK</span></div>
+                <div class="data-row"><span>STATUS:</span> <span id="profile-status" class="text-red">ACTIVE & EVADING</span></div>
+                <div class="data-row"><span>AFFILIATION:</span> <span id="profile-affiliation">UNKNOWN</span></div>
+                <div class="data-row"><span>LAST PING:</span> <span id="profile-last-ping">51.50° N, -0.12° E</span></div>
+                <div class="data-row"><span>THREAT LVL:</span> <span id="profile-threat" class="text-red">CRITICAL</span></div>
+                <div class="data-row"><span>OBJECTIVE:</span> <span id="profile-objective">DATA EXFILTRATION</span></div>
+                <div class="data-row"><span>RISK FACTOR:</span> <span id="profile-risk">92.7%</span></div>
+            </div>
+        </div>
+
+        <!-- 5. Mid Right: Network Analysis -->
+        <div class="module">
+            <div class="module-header">NETWORK INTEGRITY</div>
+            <div class="module-content data-list">
+                <div class="data-row"><span>UPLINK:</span> <span class="text-green">STABLE</span></div>
+                <div class="data-row"><span>LATENCY:</span> <span id="net-latency">12ms</span></div>
+                <div class="data-row"><span>PACKET LOSS:</span> <span id="net-loss">0.01%</span></div>
+                <div class="data-row"><span>ENCRYPTION:</span> <span>AES-256-GCM</span></div>
+                <div class="data-row"><span>NODE EU-1:</span> <span class="text-green">ONLINE</span></div>
+                <div class="data-row"><span>NODE US-W-3:</span> <span class="text-green">ONLINE</span></div>
+                <div class="data-row"><span>NODE AS-E-2:</span> <span class="text-red">UNSTABLE</span></div>
+            </div>
+        </div>
+
+        <!-- 6. Bottom Row: Main Terminal Log -->
+        <div class="module" style="grid-column: 1 / 5;">
+            <div class="module-header">CHRONOS.LOG // MASTER EVENT LOG</div>
+            <div class="module-content text-feed" id="main-terminal-log"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fade in
+            setTimeout(() => document.body.style.opacity = '1', 100);
+
+            // --- GOOGLE MAPS SETUP ---
+            let map;
+            window.initMap = function() {
+                map = new google.maps.Map(document.getElementById("map-container"), {
+                    center: { lat: 48.2082, lng: 16.3738 }, // Wien
+                    zoom: 16,
+                    mapId: "c0d4f1234567890a", // optional, für 3D-Gebäude-Style
+                    tilt: 45, // 3D-Neigung aktivieren
+                    disableDefaultUI: true,
+                    backgroundColor: '#080808',
+                });
+
+                // Marker hinzufügen
+                const marker = new google.maps.Marker({
+                    position: { lat: 48.2082, lng: 16.3738 },
+                    map,
+                    title: "FRIDAY HQ",
+                });
+
+                // Polygon / Beispiel Linie (Handelsroute)
+                const flightPath = new google.maps.Polyline({
+                    path: [
+                        { lat: 10.4806, lng: -66.9036 }, // Venezuela
+                        { lat: 55.7558, lng: 37.6173 }   // Russland
+                    ],
+                    geodesic: true,
+                    strokeColor: "#FF5500",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                });
+                flightPath.setMap(map);
+            };
+
+            // --- INTERACTIVE PROFILE ---
+            const profileModule = document.getElementById('profile-module');
+
+            // --- CCTV IMAGE ROTATION ---
+            // Using images 1 (2).jpg to 1 (39).jpg
+            const cctvElement = document.getElementById('cctv-1');
+
+            function updateCCTV(imgElement) {
+                // Random image between 2 and 39
+                const randomNum = Math.floor(Math.random() * 38) + 2;
+                // Assuming the images are in the same folder or a known path. 
+                // Based on context, filenames are "1 (x).jpg"
+                imgElement.src = `1 (${randomNum}).jpg`;
+            }
+
+            // Initial load
+            if(cctvElement) updateCCTV(cctvElement);
+
+            // Rotate images periodically
+            setInterval(() => { if(cctvElement) updateCCTV(cctvElement) }, 8000);
+
+            // --- DATA FEEDS ---
+            const feedLog = document.getElementById('feed-log');
+            const mainLog = document.getElementById('main-terminal-log');
+
+            function addLine(element, textGenerator) {
+                const line = document.createElement('div');
+                line.textContent = textGenerator();
+                element.appendChild(line);
+                if (element.children.length > 20) element.removeChild(element.firstChild);
+            }
+
+            // Kernel Log (fast)
+            setInterval(() => addLine(feedLog, () => `[${new Date().toLocaleTimeString()}] PROC_${Math.floor(Math.random()*999)}: OK`), 800);
+
+            // Main Terminal Log (slower, more detailed)
+            const mainLogActions = [
+                "KERNEL: Authenticated user 'LUKA' from 127.0.0.1.",
+                "ANALYTICS: Cross-referencing subject 'NIGHTHAWK' with financial records.",
+                "NETWORK: Detected anomalous traffic from node AS-E-2. Rerouting...",
+                "SATELLITE: Acquiring new imagery for coordinates 48.85° N, 2.35° E.",
+                "DECRYPTION: Running brute-force on file 'ledger_2025.aes'.",
+                "SYSTEM: Memory integrity check passed.",
+                "FIREWALL: Blocked incoming connection from 103.56.12.221."
+            ];
+            let logIndex = 0;
+            setInterval(() => addLine(mainLog, () => {
+                const time = new Date().toISOString();
+                const action = mainLogActions[logIndex % mainLogActions.length];
+                logIndex++;
+                return `${time} :: ${action}`;
+            }), 2500);
+
+            // Slow-moving stats
+            setInterval(() => {
+                document.getElementById('net-latency').textContent = `${Math.floor(Math.random() * 5 + 10)}ms`;
+                document.getElementById('net-loss').textContent = `${(Math.random() * 0.05).toFixed(3)}%`;
+            }, 3000);
+
+            // --- FOCUS / FULLSCREEN LOGIC ---
+            document.querySelectorAll('.module').forEach(module => {
+                module.addEventListener('dblclick', (e) => {
+                    if (e.target.classList.contains('module-header')) return;
+
+                    const isFocused = module.classList.contains('focused');
+                    document.querySelector('.module.focused')?.classList.remove('focused');
+                    
+                    if (!isFocused) {
+                        module.classList.add('focused');
+                    }
+                    
+                    document.body.classList.toggle('module-focused', !isFocused);
+
+                    // If it's the map module, trigger resize event for Google Maps
+                    if (module.id === 'map-module' && map) {
+                        setTimeout(() => google.maps.event.trigger(map, 'resize'), 400);
+                    }
+                });
+            });
+
+            // --- DRAG & DETACH LOGIC ---
+            const headers = document.querySelectorAll('.module-header');
+            
+            headers.forEach(header => {
+                header.addEventListener('mousedown', initDrag);
+            });
+
+            function initDrag(e) {
+                const module = e.target.closest('.module');
+                if (!module) return;
+
+                // 1. Calculate current position/size
+                const rect = module.getBoundingClientRect();
+                const startX = e.clientX;
+                const startY = e.clientY;
+                const offsetX = startX - rect.left;
+                const offsetY = startY - rect.top;
+
+                // 2. Detach from grid
+                // We set explicit width/height to maintain size, and absolute position
+                module.style.width = rect.width + 'px';
+                module.style.height = rect.height + 'px';
+                module.style.left = rect.left + 'px';
+                module.style.top = rect.top + 'px';
+                
+                module.classList.add('detached');
+                document.body.appendChild(module); // Move to body to break out of grid container context
+
+                // 3. Drag Logic
+                function onMouseMove(e) {
+                    e.preventDefault();
+                    module.style.left = (e.clientX - offsetX) + 'px';
+                    module.style.top = (e.clientY - offsetY) + 'px';
+                }
+
+                function onMouseUp() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            }
+        });
+    </script>
