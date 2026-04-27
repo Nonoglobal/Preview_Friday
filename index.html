@@ -708,6 +708,9 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     margin-top: 4rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .material {
     text-align: center;
@@ -927,6 +930,11 @@
     .comparison-row > div { border-right: none; border-bottom: 1px solid var(--line-soft); }
     .timeline-item { grid-template-columns: 1fr; gap: 0.5rem; }
     .footer-bottom { flex-direction: column; gap: 1rem; }
+    /* Nitrogen section mobile */
+    #nitrogen > div:nth-child(2) { grid-template-columns: 1fr !important; gap: 3rem !important; }
+    #nitrogen > div:nth-child(2) > div:last-child > div:nth-child(5) { grid-template-columns: 1fr !important; }
+    #nitrogen > div:nth-child(3) > div { grid-template-columns: 1fr !important; }
+    #nitrogen > div:nth-child(4) > div:last-child { grid-template-columns: 1fr !important; }
   }
 </style>
 </head>
@@ -942,6 +950,7 @@
   <ul class="nav-links">
     <li><a href="#philosophy">Philosophy</a></li>
     <li><a href="#products">Products</a></li>
+    <li><a href="#nitrogen">Nitrogen</a></li>
     <li><a href="#technology">Technology</a></li>
     <li><a href="#process">Process</a></li>
     <li><a href="#heritage">Heritage</a></li>
@@ -952,18 +961,18 @@
 <section class="hero">
   <div class="hero-frame"></div>
   <div>
-    <div class="hero-meta">EST. MMXXVI · SWITZERLAND</div>
+    <div class="hero-meta">EST. MMXXVI · AUSTRIA</div>
     <h1 class="hero-title">Preserve<br>the <em>Moment</em></h1>
-    <p class="hero-tagline">An object that arrests time. A vacuum that holds the bouquet, the bubble, the breath of every bottle worth opening twice.</p>
+    <p class="hero-tagline">An object that arrests time. Where vacuum ends and nitrogen begins — the bouquet, the bubble, the breath of every bottle worth opening twice. Or twenty times.</p>
     <div class="hero-divider"></div>
     <div class="hero-stats">
       <div class="stat">
-        <div class="stat-number">10×</div>
+        <div class="stat-number">30×</div>
         <div class="stat-label">Longer Freshness</div>
       </div>
       <div class="stat">
-        <div class="stat-number">−0.7</div>
-        <div class="stat-label">Bar Vacuum</div>
+        <div class="stat-number">N<sub style="font-size:0.5em;">2</sub></div>
+        <div class="stat-label">Inert Atmosphere</div>
       </div>
       <div class="stat">
         <div class="stat-number">100%</div>
@@ -1054,7 +1063,7 @@
     <div class="product-info">
       <div class="product-code">SGN · 01 — VINUM SIGILLUM</div>
       <h3>The Wine <em>Sealer</em></h3>
-      <p class="product-description">For the bottle you cannot finish but refuse to forget. A precision-machined vacuum chamber that draws air from the bottle in three turns, locking aromatics behind a silicone-edged seal of medical-grade construction.</p>
+      <p class="product-description">For the bottle you cannot finish but refuse to forget. A precision-machined chamber available in two configurations: a pure vacuum seal for everyday preservation, or the SGN·01·N — equipped with an integrated nitrogen module that displaces oxygen entirely with food-grade N₂, extending the life of an opened bottle from days into months.</p>
       
       <div class="product-specs">
         <div class="spec">
@@ -1062,8 +1071,16 @@
           <div class="spec-value">−0.7 bar</div>
         </div>
         <div class="spec">
-          <div class="spec-label">Preservation</div>
+          <div class="spec-label">Preservation · Vacuum</div>
           <div class="spec-value">10 days</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Preservation · N₂</div>
+          <div class="spec-value">90+ days</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">N₂ Capsule Yield</div>
+          <div class="spec-value">≈ 30 bottles</div>
         </div>
         <div class="spec">
           <div class="spec-label">Body Material</div>
@@ -1076,7 +1093,9 @@
       </div>
 
       <ul class="product-features">
-        <li>Mechanical lock-and-release dial — no batteries, no electronics, no failure points</li>
+        <li>Dual-mode operation — pure vacuum, or vacuum followed by nitrogen flood at the press of a single ring</li>
+        <li>Replaceable food-grade N₂ capsule housed within the body, exchangeable in seconds without tools</li>
+        <li>Mechanical lock-and-release dial — no batteries, no electronics, no points of failure</li>
         <li>Visual seal indicator confirms airtight engagement at a glance</li>
         <li>Universal fit for all standard 750 ml still wine bottles</li>
         <li>Hand-finished matte coating resistant to scratching and oxidation</li>
@@ -1171,6 +1190,188 @@
         <li>Fits all standard champagne, prosecco, crémant and méthode traditionelle bottles</li>
         <li>Visual lock/unlock pictograms — engagement confirmed without ambiguity</li>
       </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NITROGEN — THE BREAKTHROUGH ============ -->
+<section id="nitrogen" style="background: linear-gradient(180deg, transparent, rgba(74, 155, 191, 0.04), transparent); border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft);">
+  <div class="reveal">
+    <div class="section-label">— The Inert Atmosphere —</div>
+    <h2 class="section-title">When vacuum ends,<br><em>nitrogen begins</em>.</h2>
+    <p class="section-intro">The Wine Sealer SGN·01·N introduces an active inert-gas system into the SIGNATUS body. Where the standard model removes oxygen, this one replaces it — flooding the headspace with food-grade N₂ to halt oxidation almost entirely. What lasted ten days now lasts three months.</p>
+  </div>
+
+  <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; max-width: 1300px; margin: 5rem auto 0; align-items: center;">
+    <div class="product-visual" style="aspect-ratio: 1;">
+      <!-- NITROGEN MOLECULE / FLOW SVG -->
+      <svg class="device-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="n2Glow" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#7fb8d4" stop-opacity="0.25"/>
+            <stop offset="50%" stop-color="#4a9bbf" stop-opacity="0.1"/>
+            <stop offset="100%" stop-color="#4a9bbf" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="bottleGlass" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0a0d12" stop-opacity="0.7"/>
+            <stop offset="50%" stop-color="#1a1d22" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#0a0d12" stop-opacity="0.7"/>
+          </linearGradient>
+          <linearGradient id="wineLiq" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#6b1220"/>
+            <stop offset="100%" stop-color="#3a0810"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Background glow -->
+        <circle cx="250" cy="250" r="220" fill="url(#n2Glow)"/>
+
+        <!-- Bottle silhouette (cutaway) -->
+        <path d="M 200 100 L 200 160 Q 180 180 180 220 L 180 420 Q 180 440 200 440 L 300 440 Q 320 440 320 420 L 320 220 Q 320 180 300 160 L 300 100 Z" 
+              fill="url(#bottleGlass)" stroke="#4a9bbf" stroke-width="0.5" opacity="0.8"/>
+
+        <!-- Wine liquid inside -->
+        <path d="M 182 320 Q 250 315 318 320 L 318 420 Q 318 438 300 438 L 200 438 Q 182 438 182 420 Z" 
+              fill="url(#wineLiq)" opacity="0.85"/>
+
+        <!-- Wine surface ellipse -->
+        <ellipse cx="250" cy="320" rx="68" ry="6" fill="#a01a30" opacity="0.6"/>
+
+        <!-- N2 molecules in headspace -->
+        <g opacity="0.85">
+          <!-- N2 pair 1 -->
+          <circle cx="220" cy="200" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <circle cx="235" cy="200" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <line x1="220" y1="200" x2="235" y2="200" stroke="#e8eef4" stroke-width="1"/>
+          <text x="220" y="204" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+          <text x="235" y="204" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+
+          <!-- N2 pair 2 -->
+          <circle cx="265" cy="240" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <circle cx="280" cy="240" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <line x1="265" y1="240" x2="280" y2="240" stroke="#e8eef4" stroke-width="1"/>
+          <text x="265" y="244" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+          <text x="280" y="244" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+
+          <!-- N2 pair 3 -->
+          <circle cx="210" cy="270" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <circle cx="225" cy="270" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <line x1="210" y1="270" x2="225" y2="270" stroke="#e8eef4" stroke-width="1"/>
+          <text x="210" y="274" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+          <text x="225" y="274" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+
+          <!-- N2 pair 4 -->
+          <circle cx="270" cy="285" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <circle cx="285" cy="285" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <line x1="270" y1="285" x2="285" y2="285" stroke="#e8eef4" stroke-width="1"/>
+          <text x="270" y="289" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+          <text x="285" y="289" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+
+          <!-- N2 pair 5 -->
+          <circle cx="240" cy="180" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <circle cx="255" cy="180" r="8" fill="#7fb8d4" opacity="0.7"/>
+          <line x1="240" y1="180" x2="255" y2="180" stroke="#e8eef4" stroke-width="1"/>
+          <text x="240" y="184" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+          <text x="255" y="184" font-family="serif" font-size="9" fill="#0a0d12" text-anchor="middle">N</text>
+        </g>
+
+        <!-- Sealer cap on top -->
+        <ellipse cx="250" cy="100" rx="55" ry="12" fill="#1a1d22"/>
+        <path d="M 195 100 Q 195 60 250 60 Q 305 60 305 100 L 305 110 L 195 110 Z" 
+              fill="#2a2d32" stroke="#4a4d52" stroke-width="0.5"/>
+        
+        <!-- Nitrogen flow arrows from cap -->
+        <g stroke="#7fb8d4" stroke-width="1.5" fill="none" opacity="0.6">
+          <path d="M 230 110 Q 230 130 220 145" stroke-dasharray="3 3"/>
+          <path d="M 250 110 Q 250 135 250 155" stroke-dasharray="3 3"/>
+          <path d="M 270 110 Q 270 130 280 145" stroke-dasharray="3 3"/>
+        </g>
+
+        <!-- Label markers -->
+        <g font-family="serif" font-style="italic" fill="#7fb8d4" font-size="11" opacity="0.8">
+          <text x="370" y="220" text-anchor="start">— N₂ Headspace</text>
+          <line x1="295" y1="215" x2="365" y2="218" stroke="#7fb8d4" stroke-width="0.5"/>
+          
+          <text x="370" y="385" text-anchor="start">— Wine, undisturbed</text>
+          <line x1="320" y1="380" x2="365" y2="383" stroke="#7fb8d4" stroke-width="0.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <div>
+      <div style="font-size: 0.7rem; letter-spacing: 0.4em; color: var(--ice-cold); text-transform: uppercase; margin-bottom: 1.5rem;">— SGN · 01 · N · MODELLUM —</div>
+      <h3 style="font-family: var(--serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; line-height: 1.15; margin-bottom: 1.5rem;">Three days. Three weeks. <em style="font-style: italic; color: var(--ice-cold);">Three months.</em></h3>
+      <p style="color: var(--frost-soft); line-height: 1.8; margin-bottom: 2rem; font-size: 1rem;">Oxygen is wine's quiet enemy. Even the finest seal cannot prevent what the molecule already inside the bottle will do over time. The nitrogen module addresses this directly: after the vacuum cycle removes ambient air, a measured pulse of food-grade N₂ floods the headspace, displacing residual oxygen to a fraction of one percent.</p>
+      <p style="color: var(--frost-soft); line-height: 1.8; margin-bottom: 2.5rem; font-size: 1rem;">The result is the same atmosphere a cellar master uses to protect a barrel mid-fermentation — now contained within a 142-gram object that fits in your hand. A bottle opened tonight can be tasted, blind, against itself ninety days later. We have done it. The difference is not detectable.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+        <div style="border-top: 1px solid var(--ice-cold); padding-top: 1rem;">
+          <div style="font-size: 0.65rem; letter-spacing: 0.3em; color: var(--frost-soft); text-transform: uppercase; margin-bottom: 0.5rem;">Standard Cap</div>
+          <div style="font-family: var(--serif); font-size: 1.6rem; color: var(--frost);">≈ 1 day</div>
+        </div>
+        <div style="border-top: 1px solid var(--ice-cold); padding-top: 1rem;">
+          <div style="font-size: 0.65rem; letter-spacing: 0.3em; color: var(--frost-soft); text-transform: uppercase; margin-bottom: 0.5rem;">Vacuum Mode</div>
+          <div style="font-family: var(--serif); font-size: 1.6rem; color: var(--frost);">10 days</div>
+        </div>
+        <div style="border-top: 1px solid var(--ice-cold); padding-top: 1rem;">
+          <div style="font-size: 0.65rem; letter-spacing: 0.3em; color: var(--frost-soft); text-transform: uppercase; margin-bottom: 0.5rem;">N₂ Mode</div>
+          <div style="font-family: var(--serif); font-size: 1.6rem; color: var(--ice-cold); font-style: italic;">90+ days</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- N2 PROCESS -->
+  <div class="reveal" style="max-width: 1200px; margin: 6rem auto 0;">
+    <h3 style="font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 300; text-align: center; margin-bottom: 4rem;">How the <em style="font-style: italic; color: var(--ice-cold);">nitrogen cycle</em> works</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line);">
+      <div style="padding: 2.5rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--glass);">
+        <div style="font-family: var(--serif); font-style: italic; color: var(--ice-cold); font-size: 1rem; margin-bottom: 1.5rem;">— phase i —</div>
+        <h4 style="font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 1rem;">Vacuum Draw</h4>
+        <p style="font-size: 0.85rem; color: var(--frost-soft); line-height: 1.7;">The mechanical pump removes 70% of headspace air through the silicone valve. Oxygen concentration drops from 21% to approximately 6%.</p>
+      </div>
+      <div style="padding: 2.5rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--glass);">
+        <div style="font-family: var(--serif); font-style: italic; color: var(--ice-cold); font-size: 1rem; margin-bottom: 1.5rem;">— phase ii —</div>
+        <h4 style="font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 1rem;">N₂ Release</h4>
+        <p style="font-size: 0.85rem; color: var(--frost-soft); line-height: 1.7;">A 0.4-second pulse of pure nitrogen is released from the integrated capsule directly into the bottle's headspace through a precision micro-valve.</p>
+      </div>
+      <div style="padding: 2.5rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--glass);">
+        <div style="font-family: var(--serif); font-style: italic; color: var(--ice-cold); font-size: 1rem; margin-bottom: 1.5rem;">— phase iii —</div>
+        <h4 style="font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 1rem;">Displacement</h4>
+        <p style="font-size: 0.85rem; color: var(--frost-soft); line-height: 1.7;">Nitrogen — heavier than oxygen at this concentration — settles onto the wine's surface, pushing the remaining oxygen up and through the exhaust valve.</p>
+      </div>
+      <div style="padding: 2.5rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--glass);">
+        <div style="font-family: var(--serif); font-style: italic; color: var(--ice-cold); font-size: 1rem; margin-bottom: 1.5rem;">— phase iv —</div>
+        <h4 style="font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 1rem;">Inert Lock</h4>
+        <p style="font-size: 0.85rem; color: var(--frost-soft); line-height: 1.7;">The membrane closes. The bottle is now sealed beneath an atmosphere of 99.4% pure nitrogen — chemically incapable of oxidising the wine.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- N2 advantages -->
+  <div class="reveal" style="max-width: 1100px; margin: 6rem auto 0; text-align: center;">
+    <h3 style="font-family: var(--serif); font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 300; margin-bottom: 1rem; line-height: 1.3;">Why nitrogen, and not <em style="font-style: italic; color: var(--ice-cold);">argon, CO₂, or simply more vacuum</em>?</h3>
+    
+    <p style="color: var(--frost-soft); font-size: 1rem; line-height: 1.8; max-width: 800px; margin: 2rem auto 3rem;">Nitrogen is the gas already present in 78% of the air we breathe. It is biologically inert, tasteless, odourless, and — critically — does not dissolve into wine the way carbon dioxide does. Argon is heavier and more effective in laboratory conditions, but its cost is prohibitive and its supply chain unreliable. Pure vacuum, beyond a certain threshold, begins to draw aromatic compounds out of the wine itself. Nitrogen alone offers preservation without intervention — it protects the wine without ever touching its character.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; max-width: 800px; margin: 0 auto; border: 1px solid var(--line); text-align: left;">
+      <div style="padding: 1.8rem 2rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+        <div style="font-size: 0.65rem; letter-spacing: 0.3em; color: var(--ice-cold); text-transform: uppercase; margin-bottom: 0.6rem;">— Inert</div>
+        <p style="font-size: 0.9rem; color: var(--frost-soft); line-height: 1.6;">Does not react with phenols, tannins, anthocyanins, or any aromatic compound</p>
+      </div>
+      <div style="padding: 1.8rem 2rem; border-bottom: 1px solid var(--line);">
+        <div style="font-size: 0.65rem; letter-spacing: 0.3em; color: var(--ice-cold); text-transform: uppercase; margin-bottom: 0.6rem;">— Insoluble</div>
+        <p style="font-size: 0.9rem; color: var(--frost-soft); line-height: 1.6;">Does not dissolve into the wine, leaving body and structure unchanged</p>
+      </div>
+      <div style="padding: 1.8rem 2rem; border-right: 1px solid var(--line);">
+        <div style="font-size: 0.65rem; letter-spacing: 0.3em; color: var(--ice-cold); text-transform: uppercase; margin-bottom: 0.6rem;">— Food-Grade</div>
+        <p style="font-size: 0.9rem; color: var(--frost-soft); line-height: 1.6;">Capsules certified to EU 1333/2008 standards · E941 designation</p>
+      </div>
+      <div style="padding: 1.8rem 2rem;">
+        <div style="font-size: 0.65rem; letter-spacing: 0.3em; color: var(--ice-cold); text-transform: uppercase; margin-bottom: 0.6rem;">— Industry-Proven</div>
+        <p style="font-size: 0.9rem; color: var(--frost-soft); line-height: 1.6;">The same gas used by every serious winery to protect tanks during ageing</p>
+      </div>
     </div>
   </div>
 </section>
@@ -1318,18 +1519,23 @@
   <div class="comparison reveal">
     <div class="comparison-row header">
       <div></div>
-      <div>SIGNATUS</div>
+      <div>SIGNATUS · N₂</div>
       <div>Conventional Stoppers</div>
     </div>
     <div class="comparison-row">
       <div>Air Removal</div>
-      <div>Active vacuum (−0.7 bar)</div>
+      <div>Vacuum + nitrogen displacement</div>
       <div>Passive cap, no extraction</div>
     </div>
     <div class="comparison-row">
       <div>Preservation Window</div>
-      <div>Up to 10 days (still) · 5 days (sparkling)</div>
+      <div>Up to 90 days (N₂) · 10 days (vacuum)</div>
       <div>24–48 hours typical</div>
+    </div>
+    <div class="comparison-row">
+      <div>Headspace Atmosphere</div>
+      <div>99.4% inert nitrogen</div>
+      <div>Ambient air · 21% oxygen</div>
     </div>
     <div class="comparison-row">
       <div>Sealing Mechanism</div>
@@ -1354,14 +1560,14 @@
   </div>
 </section>
 
-<!-- ============ HERITAGE — ICE FESTIVAL ============ -->
+<!-- ============ HERITAGE — AUSTRIAN ALPINE ============ -->
 <section class="heritage" id="heritage">
   <div class="heritage-content reveal">
     <div class="section-label" style="justify-content: center;">— Origin —</div>
     <h2>Born of <em>ice</em>,<br>refined by <em>fire</em>.</h2>
-    <p>SIGNATUS draws its visual language from the great ice festivals of the Swiss Alps — those silent winter mornings when sculpted glaciers catch the first red of dawn. There is something the ice teaches that no laboratory can: that the most fragile things, kept properly, become the most enduring.</p>
-    <p>Our objects are designed in Lausanne, machined in Solothurn, and assembled by hand in the Jura. Each carries the cold geometry of an ice cathedral — and the warm intention of every cellar it will eventually serve.</p>
-    <div class="heritage-mark">SWISS<br>MADE</div>
+    <p>SIGNATUS draws its visual language from the great alpine winters of Austria — the silent mornings in Tirol when the eastern sun catches the ice cathedrals carved each January, and from the cellars of the Wachau, where Riesling has rested in cool stone for nine hundred years. There is something the ice teaches that no laboratory can: that the most fragile things, kept properly, become the most enduring.</p>
+    <p>Our objects are designed in Vienna, machined in Steyr, and assembled by hand in Lower Austria. Each carries the cold geometry of an alpine ice sculpture — and the warm intention of every Heuriger, Vinothek, and private cellar it will eventually serve.</p>
+    <div class="heritage-mark">MADE IN<br>AUSTRIA</div>
   </div>
 </section>
 
@@ -1369,8 +1575,8 @@
 <section>
   <div class="reveal">
     <div class="section-label">— Materia Prima —</div>
-    <h2 class="section-title">Four materials.<br><em>Nothing else</em>.</h2>
-    <p class="section-intro">A SIGNATUS contains no plastics in its critical path. No batteries. No adhesives between functional components. What it contains, it contains for permanence.</p>
+    <h2 class="section-title">Eight materials.<br><em>Nothing else</em>.</h2>
+    <p class="section-intro">A SIGNATUS contains no plastics in its critical path. No batteries. No adhesives between functional components. The nitrogen capsule is the only consumable — replaceable in seconds, certified food-grade, and recyclable through every standard Austrian metal stream. What it contains, it contains for permanence.</p>
   </div>
 
   <div class="materials-grid reveal">
@@ -1394,6 +1600,26 @@
       <h5>Sapphire Indicator</h5>
       <p>Scratch-resistant viewport</p>
     </div>
+    <div class="material">
+      <div class="material-swatch" style="background: linear-gradient(135deg, #4a9bbf, #1a4a5f); border: 1px solid var(--ice-cold); width: 80px; height: 80px; margin: 0 auto 1.5rem; border-radius: 50%;"></div>
+      <h5>N₂ Capsule</h5>
+      <p>Food-grade nitrogen · E941</p>
+    </div>
+    <div class="material">
+      <div class="material-swatch" style="background: linear-gradient(135deg, #2a2d32, #0a0d12); border: 1px solid var(--gold); width: 80px; height: 80px; margin: 0 auto 1.5rem; border-radius: 50%;"></div>
+      <h5>Brass Micro-Valve</h5>
+      <p>Precision-machined · ±0.02 mm</p>
+    </div>
+    <div class="material">
+      <div class="material-swatch" style="background: linear-gradient(135deg, #5a4d32, #2a200a); border: 1px solid var(--gold); width: 80px; height: 80px; margin: 0 auto 1.5rem; border-radius: 50%;"></div>
+      <h5>Walnut Veneer</h5>
+      <p>Presentation case · Austrian oak</p>
+    </div>
+    <div class="material">
+      <div class="material-swatch" style="background: linear-gradient(135deg, #1a1d22, #08090c); border: 1px solid var(--frost-soft); width: 80px; height: 80px; margin: 0 auto 1.5rem; border-radius: 50%;"></div>
+      <h5>PTFE Sealing Ring</h5>
+      <p>Chemically inert · zero leach</p>
+    </div>
   </div>
 </section>
 
@@ -1410,28 +1636,35 @@
       <div class="timeline-year">2023</div>
       <div class="timeline-content">
         <h5>The Question</h5>
-        <p>A sommelier's frustration becomes a design brief. Why must a half-finished bottle of Pomerol surrender its character overnight, when the technology to prevent it has existed for decades?</p>
+        <p>A Wachau sommelier's frustration becomes a design brief in a Vienna studio. Why must a half-finished bottle of Grüner Veltliner surrender its character overnight, when the technology to prevent it has existed in industrial wineries for decades?</p>
       </div>
     </div>
     <div class="timeline-item">
       <div class="timeline-year">2024</div>
       <div class="timeline-content">
         <h5>The Material Trials</h5>
-        <p>Forty-three iterations of the silicone membrane. Eleven failed prototypes of the tri-axial claw. The first SIGNATUS that holds vacuum for seven days without measurable loss.</p>
+        <p>Forty-three iterations of the silicone membrane. Eleven failed prototypes of the tri-axial claw. The first SIGNATUS that holds vacuum for seven days without measurable loss is built in a Steyr workshop.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2025</div>
+      <div class="timeline-content">
+        <h5>The Nitrogen Breakthrough</h5>
+        <p>Vacuum alone reaches its ceiling at ten days. The team integrates a food-grade N₂ micro-capsule into the body, solving the displacement problem in a chamber smaller than a wine cork. Blind tastings at ninety days return identical scores.</p>
       </div>
     </div>
     <div class="timeline-item">
       <div class="timeline-year">2025</div>
       <div class="timeline-content">
         <h5>The Sparkling Question</h5>
-        <p>A second product begins. Champagne is not still wine — it requires a different physics, a different geometry. The pressure-resistant variant enters development in Solothurn.</p>
+        <p>A second product begins. Champagne is not still wine — it requires a different physics, a different geometry. The pressure-resistant variant enters parallel development.</p>
       </div>
     </div>
     <div class="timeline-item">
       <div class="timeline-year">2026</div>
       <div class="timeline-content">
         <h5>The Release</h5>
-        <p>Both objects are ready. Both objects are released. SIGNATUS Collection No. I begins shipping from the Jura — limited to 1,200 pieces in its founding edition.</p>
+        <p>All three configurations are ready. SIGNATUS Collection No. I begins shipping from Lower Austria — limited to 1,200 pieces per model in its founding edition.</p>
       </div>
     </div>
   </div>
@@ -1450,15 +1683,39 @@
         <h4>How long does SIGNATUS preserve an opened bottle?</h4>
         <div class="faq-toggle">+</div>
       </div>
-      <div class="faq-answer">Still wines retain their full aromatic profile for up to ten days under our Wine Sealer when stored at proper temperature. Sparkling wines retain their effervescence for up to five days under the Champagne Sealer. Both figures are derived from controlled tasting panels, not marketing optimism.</div>
+      <div class="faq-answer">In vacuum mode, still wines retain their full aromatic profile for up to ten days at proper cellar temperature. In nitrogen mode (SGN·01·N), the same wines retain their character for ninety days or longer — we have conducted blind panels confirming indistinguishable results at the three-month mark. Sparkling wines retain effervescence for up to five days under the Champagne Sealer. All figures are derived from controlled tasting panels, not marketing optimism.</div>
     </div>
 
     <div class="faq-item">
       <div class="faq-question">
-        <h4>Does the vacuum affect the wine itself?</h4>
+        <h4>Is the nitrogen safe? Will it affect the taste?</h4>
         <div class="faq-toggle">+</div>
       </div>
-      <div class="faq-answer">No. The vacuum operates above the liquid, removing only the headspace oxygen that drives oxidation. The wine itself is never subjected to negative pressure, never contacts the sealing membrane, and is not altered in any chemical or sensory dimension.</div>
+      <div class="faq-answer">Entirely safe and entirely tasteless. Nitrogen makes up 78% of the air you are breathing right now — it is biologically inert, chemically stable, and approved under EU regulation 1333/2008 as food additive E941. It does not dissolve into the wine, does not interact with any aromatic compound, and does not alter texture, body, or finish. The wine you taste from a nitrogen-preserved bottle is, molecularly, the same wine you would have tasted on the night you opened it.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <h4>How long does one nitrogen capsule last?</h4>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">Each food-grade N₂ capsule contains enough nitrogen for approximately thirty bottle preservations. The capsule is housed within the SIGNATUS body and is replaced in under ten seconds — no tools required. Replacement capsules ship in recyclable packs of six and are available through our atelier or any partnered Austrian Vinothek.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <h4>Does the vacuum or nitrogen affect the wine itself?</h4>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">No. The vacuum operates above the liquid, removing only the headspace oxygen that drives oxidation. The nitrogen, similarly, occupies only the space between the wine surface and the seal. The wine itself is never subjected to negative pressure, never contacts the membrane or capsule, and is not altered in any chemical or sensory dimension.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <h4>What is the difference between SGN·01 and SGN·01·N?</h4>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">The SGN·01 is the pure-vacuum model: a mechanical pump that removes air and seals the bottle for up to ten days. The SGN·01·N adds an integrated nitrogen module — after the vacuum cycle, a measured pulse of food-grade N₂ floods the headspace, displacing residual oxygen and extending preservation to ninety days or more. The bodies are externally identical; only the internal architecture differs. Both can be ordered with or without the matching Champagne Sealer (SGN·02).</div>
     </div>
 
     <div class="faq-item">
@@ -1466,7 +1723,7 @@
         <h4>Will it fit older or unusually shaped bottles?</h4>
         <div class="faq-toggle">+</div>
       </div>
-      <div class="faq-answer">The SIGNATUS is calibrated for the four dominant bottle-neck profiles — Bordelaise, Bourguignonne, Champenoise, and Hochbouteille — covering approximately 98% of bottles in production. Vintage bottles with non-standard necks should be tested individually; we provide a 30-day return window for incompatible fits.</div>
+      <div class="faq-answer">The SIGNATUS is calibrated for the four dominant bottle-neck profiles — Bordelaise, Bourguignonne, Champenoise, and Hochbouteille (the traditional Austrian and German Riesling shape) — covering approximately 98% of bottles in production. Vintage bottles with non-standard necks should be tested individually; we provide a 30-day return window for incompatible fits.</div>
     </div>
 
     <div class="faq-item">
@@ -1474,7 +1731,7 @@
         <h4>Are the two products interchangeable?</h4>
         <div class="faq-toggle">+</div>
       </div>
-      <div class="faq-answer">No. The Wine Sealer creates negative pressure, which is appropriate for still wines but would damage a sparkling wine bottle by drawing dissolved CO₂ out of solution. The Champagne Sealer holds positive pressure, which is essential for retaining bubbles. Each is designed for its own purpose. We recommend both.</div>
+      <div class="faq-answer">No. The Wine Sealer creates negative pressure (and optionally nitrogen displacement), which is appropriate for still wines but would damage a sparkling wine bottle by drawing dissolved CO₂ out of solution. The Champagne Sealer holds positive pressure, which is essential for retaining bubbles. Each is designed for its own purpose. We recommend both.</div>
     </div>
 
     <div class="faq-item">
@@ -1482,7 +1739,7 @@
         <h4>How is SIGNATUS cleaned and maintained?</h4>
         <div class="faq-toggle">+</div>
       </div>
-      <div class="faq-answer">The silicone membrane is removable and dishwasher-safe. The aluminium body should be wiped with a soft cloth — never submerged. The mechanical interior contains no consumable parts and requires no service for the engineered lifetime of the object.</div>
+      <div class="faq-answer">The silicone membrane is removable and dishwasher-safe. The aluminium body should be wiped with a soft cloth — never submerged. The mechanical interior contains no consumable parts beyond the nitrogen capsule and requires no service for the engineered lifetime of the object.</div>
     </div>
 
     <div class="faq-item">
@@ -1490,7 +1747,7 @@
         <h4>What does the founding edition include?</h4>
         <div class="faq-toggle">+</div>
       </div>
-      <div class="faq-answer">Each SIGNATUS arrives in a hand-assembled walnut presentation case, accompanied by a numbered certificate of authenticity, a microfibre cleaning cloth, and a printed monograph documenting the development process. The founding edition is limited to 1,200 pieces per product.</div>
+      <div class="faq-answer">Each SIGNATUS arrives in a hand-assembled walnut presentation case, accompanied by a numbered certificate of authenticity, two N₂ capsules (for the SGN·01·N), a microfibre cleaning cloth, and a printed monograph documenting the development process from Vienna to Steyr. The founding edition is limited to 1,200 pieces per model.</div>
     </div>
   </div>
 </section>
@@ -1505,17 +1762,18 @@
       <h6>Collection</h6>
       <ul>
         <li>Wine Sealer · SGN 01</li>
+        <li>Wine Sealer N₂ · SGN 01·N</li>
         <li>Champagne Sealer · SGN 02</li>
+        <li>N₂ Capsule Refills</li>
         <li>Founding Edition</li>
-        <li>Presentation Case</li>
       </ul>
     </div>
     <div class="footer-col">
       <h6>Engineering</h6>
       <ul>
-        <li>Technology</li>
+        <li>Nitrogen Technology</li>
+        <li>Vacuum System</li>
         <li>Materials</li>
-        <li>Process</li>
         <li>Specifications</li>
       </ul>
     </div>
@@ -1523,7 +1781,7 @@
       <h6>Maison</h6>
       <ul>
         <li>Heritage</li>
-        <li>The Atelier · Jura</li>
+        <li>The Atelier · Lower Austria</li>
         <li>Press</li>
         <li>Contact</li>
       </ul>
@@ -1533,15 +1791,15 @@
       <ul>
         <li>Maintenance Guide</li>
         <li>Warranty (Lifetime)</li>
+        <li>Capsule Recycling</li>
         <li>Returns · 30 Days</li>
-        <li>Service</li>
       </ul>
     </div>
   </div>
 
   <div class="footer-bottom">
-    <div>© MMXXVI · SIGNATUS · Lausanne</div>
-    <div>Designed in Switzerland · Made by hand</div>
+    <div>© MMXXVI · SIGNATUS · Vienna</div>
+    <div>Designed in Austria · Made by hand</div>
   </div>
 </footer>
 
