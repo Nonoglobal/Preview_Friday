@@ -1025,192 +1025,6 @@
     100% { opacity: 0; transform: translateX(150px); }
   }
 
-  /* Reveal CTA after glass leaves */
-  .intro-cta-wrap {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 1.2s ease;
-    padding: 0 2rem;
-  }
-  .intro-cta-wrap.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .intro-cta-title {
-    font-family: var(--serif);
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    font-weight: 300;
-    line-height: 1.2;
-    text-align: center;
-    margin-bottom: 1rem;
-    color: var(--frost);
-  }
-  .intro-cta-title em { font-style: italic; color: var(--wine-glow); }
-  .intro-cta-sub {
-    font-family: var(--serif);
-    font-style: italic;
-    color: var(--frost-soft);
-    font-size: 1rem;
-    text-align: center;
-    margin-bottom: 3.5rem;
-    max-width: 500px;
-  }
-
-  /* ============ ZIPPER PUZZLE ============ */
-  .zipper-stage {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  .zipper-bottle {
-    position: relative;
-    width: 160px;
-    height: 420px;
-  }
-
-  .zipper-bottle svg {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* The zipper track: spans the full bottle vertically, runs through the center */
-  .zipper-track {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    pointer-events: none;
-  }
-
-  /* OPEN HALVES (visible BELOW the slider) — they peel apart, leaving a visible gap */
-  .zip-half {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 8px;
-    background:
-      repeating-linear-gradient(
-        180deg,
-        #c9d4e1 0px,
-        #c9d4e1 3px,
-        #5a6570 3px,
-        #5a6570 4px,
-        #2a3540 4px,
-        #2a3540 5px,
-        #5a6570 5px,
-        #5a6570 6px
-      );
-    border-radius: 1px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-    transition: clip-path 0.3s linear;
-  }
-  .zip-half-left {
-    left: 50%;
-    transform: translateX(-12px);
-  }
-  .zip-half-right {
-    left: 50%;
-    transform: translateX(4px);
-  }
-
-  /* CLOSED zipper section (above slider) — single seam with interlocked tooth pattern */
-  .zip-closed {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 0;
-    width: 10px;
-    background:
-      linear-gradient(90deg,
-        transparent 0%,
-        rgba(0,0,0,0.4) 20%,
-        #8a95a0 35%,
-        #c9d4e1 50%,
-        #8a95a0 65%,
-        rgba(0,0,0,0.4) 80%,
-        transparent 100%
-      ),
-      repeating-linear-gradient(
-        180deg,
-        #2a3540 0px,
-        #2a3540 1px,
-        #c9d4e1 1px,
-        #c9d4e1 4px
-      );
-    box-shadow: 0 0 8px rgba(232, 238, 244, 0.2);
-    border-radius: 1px;
-  }
-
-  /* The slider — draggable */
-  .zip-slider {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    cursor: grab;
-    pointer-events: auto;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.7));
-    transition: filter 0.3s;
-    z-index: 10;
-  }
-  .zip-slider:active { cursor: grabbing; }
-  .zip-slider.dragging { transition: none; }
-  .zip-slider:hover { filter: drop-shadow(0 6px 18px rgba(160, 26, 48, 0.5)); }
-
-  .zipper-instruction {
-    margin-top: 2rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.4em;
-    color: var(--frost-soft);
-    text-transform: uppercase;
-    transition: color 0.4s;
-  }
-  .zipper-instruction.success { color: var(--ice-cold); }
-
-  .zipper-progress {
-    margin-top: 1.5rem;
-    width: 220px;
-    height: 1px;
-    background: var(--line);
-    overflow: hidden;
-  }
-  .zipper-progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--wine), var(--wine-glow));
-    transition: width 0.05s linear, background 0.5s ease;
-  }
-  .zipper-progress-bar.success {
-    background: linear-gradient(90deg, var(--ice-blue), var(--ice-cold));
-  }
-
-  .intro-skip {
-    position: absolute;
-    bottom: 2rem;
-    right: 2rem;
-    background: none;
-    border: 1px solid var(--line);
-    color: var(--frost-soft);
-    font-family: var(--sans);
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    padding: 0.7rem 1.4rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    opacity: 0;
-    animation: introFadeIn 1s ease forwards 1s;
-  }
-  .intro-skip:hover { color: var(--frost); border-color: var(--frost-soft); }
-
   /* ============ STEPS CARD ============ */
   .steps-grid {
     display: grid;
@@ -1284,9 +1098,6 @@
     .pour-scene { width: 90vw; height: 60vh; }
     .pour-scene svg { max-width: 100%; height: auto; }
     .steps-grid { grid-template-columns: repeat(2, 1fr); }
-    .zipper-bottle { width: 130px; height: 340px; }
-    .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
-    .contact-form { padding: 1.5rem; }
   }
 </style>
 </head>
@@ -1396,102 +1207,6 @@
       </svg>
     </div>
   </div>
-
-  <div class="intro-cta-wrap" id="introCta">
-    <h2 class="intro-cta-title">Now <em>seal</em> the bottle.</h2>
-    <p class="intro-cta-sub">Drag the zipper upward — close the bottle, enter SIGNATUS.</p>
-
-    <div class="zipper-stage" id="zipperStage">
-      <!-- The wine bottle silhouette -->
-      <div class="zipper-bottle">
-        <svg width="160" height="420" viewBox="0 0 160 420" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="zipBottleBody" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#0a0d12"/>
-              <stop offset="50%" stop-color="#3a1d22"/>
-              <stop offset="100%" stop-color="#0a0d12"/>
-            </linearGradient>
-            <linearGradient id="zipBottleNeck" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#0a0d12"/>
-              <stop offset="50%" stop-color="#2a1d22"/>
-              <stop offset="100%" stop-color="#0a0d12"/>
-            </linearGradient>
-            <linearGradient id="zipLabel" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#f4ead0"/>
-              <stop offset="100%" stop-color="#d4c08a"/>
-            </linearGradient>
-          </defs>
-
-          <!-- Bottle body -->
-          <path d="M 40 410 L 40 130 Q 40 100 55 80 L 60 50 L 100 50 L 105 80 Q 120 100 120 130 L 120 410 Z" 
-                fill="url(#zipBottleBody)" stroke="#1a1d22" stroke-width="0.5"/>
-
-          <!-- Neck -->
-          <rect x="60" y="20" width="40" height="35" fill="url(#zipBottleNeck)"/>
-          <ellipse cx="80" cy="20" rx="20" ry="3" fill="#0a0608"/>
-
-          <!-- Label -->
-          <rect x="48" y="200" width="64" height="100" fill="url(#zipLabel)" opacity="0.95"/>
-          <text x="80" y="225" font-family="serif" font-style="italic" font-size="11" fill="#1a1d22" text-anchor="middle" font-weight="600">Grüner</text>
-          <text x="80" y="240" font-family="serif" font-style="italic" font-size="11" fill="#1a1d22" text-anchor="middle" font-weight="600">Veltliner</text>
-          <line x1="58" y1="248" x2="102" y2="248" stroke="#1a1d22" stroke-width="0.5"/>
-          <text x="80" y="265" font-family="serif" font-size="6" fill="#1a1d22" text-anchor="middle" letter-spacing="2">WACHAU</text>
-          <text x="80" y="278" font-family="serif" font-size="5" fill="#1a1d22" text-anchor="middle">MMXXIII</text>
-          <text x="80" y="290" font-family="serif" font-style="italic" font-size="5" fill="#1a1d22" text-anchor="middle">— Niederösterreich —</text>
-
-          <!-- Highlight -->
-          <ellipse cx="50" cy="220" rx="3" ry="80" fill="#fff" opacity="0.05"/>
-        </svg>
-
-        <!-- THE ZIPPER OVERLAY: vertical track that runs the bottle's length -->
-        <!-- Below the slider position: OPEN state (split halves visible, gap shown) -->
-        <!-- Above the slider position: CLOSED state (zipper teeth interlocked, solid) -->
-        <div class="zipper-track" id="zipperTrack">
-          <!-- Open part (bottom): split halves drift apart -->
-          <div class="zip-half zip-half-left" id="zipHalfLeft"></div>
-          <div class="zip-half zip-half-right" id="zipHalfRight"></div>
-
-          <!-- Closed part (top): teeth pattern, sharp center seam -->
-          <div class="zip-closed" id="zipClosed"></div>
-
-          <!-- The slider / pull tab -->
-          <div class="zip-slider" id="zipSlider">
-            <svg width="48" height="56" viewBox="0 0 48 56" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="sliderMetal" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#c9d4e1"/>
-                  <stop offset="50%" stop-color="#7a8590"/>
-                  <stop offset="100%" stop-color="#3a4550"/>
-                </linearGradient>
-                <linearGradient id="sliderPull" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#a01a30"/>
-                  <stop offset="100%" stop-color="#6b1220"/>
-                </linearGradient>
-              </defs>
-              <!-- Slider body (metal trapezoid) -->
-              <path d="M 8 18 L 40 18 L 36 38 L 12 38 Z" fill="url(#sliderMetal)" stroke="#1a1d22" stroke-width="0.8"/>
-              <!-- Center groove -->
-              <line x1="24" y1="20" x2="24" y2="36" stroke="#1a1d22" stroke-width="1"/>
-              <!-- Pull-tab attachment -->
-              <rect x="22" y="14" width="4" height="6" fill="#3a4550"/>
-              <!-- Pull-tab (the part you grab) -->
-              <rect x="14" y="0" width="20" height="16" rx="2" fill="url(#sliderPull)" stroke="#1a1d22" stroke-width="0.5"/>
-              <text x="24" y="11" font-family="serif" font-style="italic" font-size="6" fill="#f4ead0" text-anchor="middle" letter-spacing="1">SGN</text>
-              <!-- Highlights -->
-              <line x1="10" y1="20" x2="38" y2="20" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <div class="zipper-instruction" id="zipperInstruction">— Pull the zipper up to seal the bottle —</div>
-      <div class="zipper-progress">
-        <div class="zipper-progress-bar" id="zipperProgressBar"></div>
-      </div>
-    </div>
-  </div>
-
-  <button class="intro-skip" id="introSkip">Skip Intro →</button>
 </div>
 
 <div class="atmosphere"></div>
@@ -1508,7 +1223,6 @@
     <li><button class="nav-link" data-target="4">Engineering</button></li>
     <li><button class="nav-link" data-target="5">Heritage</button></li>
     <li><button class="nav-link" data-target="6">Answers</button></li>
-    <li><button class="nav-link" data-target="7">Contact</button></li>
   </ul>
 </nav>
 
@@ -1976,77 +1690,8 @@
     </div>
   </section>
 
-  <!-- CARD 7 — CONTACT -->
-  <section class="card contact-card" data-card-index="7" data-card-name="Contact">
-    <div class="card-inner">
-      <div class="section-label">— Direct Atelier —</div>
-      <h2 class="section-title">Speak with <em>us</em>.</h2>
-      <p class="section-intro">For questions about a specific bottle, a trade enquiry, a bespoke gifting request, or simply to share something — write directly to our atelier. Every message is read personally and answered within two working days.</p>
-
-      <div class="contact-grid">
-        <div class="contact-info">
-          <h3>One <em>line</em>. One <em>reply</em>.</h3>
-          <p>The form is the fastest way. No customer service queue, no automated routing — your message reaches our small team in Vienna directly. We answer in the language you wrote in: German, English, Italian, French.</p>
-          <p>For urgent trade enquiries, please mention "TRADE" in the subject. Press contacts welcome.</p>
-
-          <div class="contact-detail">
-            <div class="contact-detail-label">— Atelier —</div>
-            <div class="contact-detail-value">Vienna · Austria</div>
-          </div>
-          <div class="contact-detail">
-            <div class="contact-detail-label">— Response —</div>
-            <div class="contact-detail-value">Within 2 working days</div>
-          </div>
-          <div class="contact-detail">
-            <div class="contact-detail-label">— Languages —</div>
-            <div class="contact-detail-value">DE · EN · IT · FR</div>
-          </div>
-        </div>
-
-        <form class="contact-form" id="contactForm">
-          <div class="form-row">
-            <label class="form-label" for="contactName">Your name <span class="required">*</span></label>
-            <input class="form-input" type="text" id="contactName" name="name" placeholder="How may we address you?" required>
-          </div>
-
-          <div class="form-row">
-            <label class="form-label" for="contactEmail">Email address <span class="required">*</span></label>
-            <input class="form-input" type="email" id="contactEmail" name="email" placeholder="your@email.com" required>
-          </div>
-
-          <div class="form-row">
-            <label class="form-label" for="contactSubject">Subject</label>
-            <select class="form-select" id="contactSubject" name="subject">
-              <option value="General Enquiry">General Enquiry</option>
-              <option value="Pre-order / Founding Edition">Pre-order / Founding Edition</option>
-              <option value="Trade / Wholesale">Trade / Wholesale</option>
-              <option value="Press / Media">Press / Media</option>
-              <option value="Bespoke / Engraving">Bespoke / Engraving</option>
-              <option value="Technical Support">Technical Support</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <div class="form-row">
-            <label class="form-label" for="contactMessage">Your message <span class="required">*</span></label>
-            <textarea class="form-textarea" id="contactMessage" name="message" placeholder="What would you like us to know?" required></textarea>
-          </div>
-
-          <!-- Honeypot field — hidden from real users, traps bots -->
-          <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
-
-          <button type="submit" class="form-submit" id="formSubmit">Send Message</button>
-
-          <div class="form-status" id="formStatus"></div>
-
-          <p class="form-privacy">By sending, you consent to your message being received at our atelier. We do not share, sell, or store your email beyond what is necessary to reply. No newsletter sign-up — ever.</p>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- CARD 8 — FOOTER -->
-  <section class="card footer-card" data-card-index="8" data-card-name="Atelier">
+  <!-- CARD 7 — FOOTER -->
+  <section class="card footer-card" data-card-index="7" data-card-name="Atelier">
     <div class="card-inner">
       <div class="footer-mark">SIGN<span>A</span>TUS</div>
       <p class="footer-tagline">— Vinum Tempus · Preserve the moment —</p>
@@ -2085,100 +1730,186 @@
     item.addEventListener('click', () => item.classList.toggle('active'));
   });
 
-  // Card targets
-  const cards = document.querySelectorAll('.card');
+  // ============ INFINITE LOOP CARD STACK ============
+  // Strategy: Two clones flank the original cards — the LAST card cloned at the
+  // top, and the FIRST card cloned at the bottom. The user always lives in the
+  // "real" range; whenever they cross into a clone, we instantly teleport them
+  // to the matching position on the other side of the strip.
+  //
+  // Critical detail: the teleport check fires SYNCHRONOUSLY on the scroll event
+  // (not in a rAF callback) so the browser never paints the clone before we
+  // correct the position. The clones are visually identical to the originals
+  // they mirror, so even on the rare frame where they do flash, the eye sees
+  // continuous content.
+
+  const navLinks = document.querySelectorAll('.nav-link');
+  const stack = document.getElementById('stack');
+  const originalCards = Array.from(document.querySelectorAll('.card'));
+  const N = originalCards.length;
+
+  // Clone the LAST original card → place at the TOP of the strip
+  const cloneTop = originalCards[N - 1].cloneNode(true);
+  cloneTop.classList.add('clone');
+  cloneTop.removeAttribute('data-card-index');
+  cloneTop.setAttribute('data-clone', 'top');
+
+  // Clone the FIRST original card → place at the BOTTOM of the strip
+  const cloneBottom = originalCards[0].cloneNode(true);
+  cloneBottom.classList.add('clone');
+  cloneBottom.removeAttribute('data-card-index');
+  cloneBottom.setAttribute('data-clone', 'bottom');
+
+  stack.insertBefore(cloneTop, originalCards[0]);
+  stack.appendChild(cloneBottom);
+
+  // DOM order: [cloneTop, real_0, real_1, ..., real_{N-1}, cloneBottom]
+  const allCards = [cloneTop, ...originalCards, cloneBottom];
+
+  function topOf(idx) { return allCards[idx].offsetTop; }
+
+  // === BOUNDS of the "real" scroll region ===
+  // realStart  = where the first real card begins
+  // realEnd    = where the last real card ends (= where cloneBottom begins)
+  // The user's scrollY should always stay between realStart and realEnd.
+  // When they cross either boundary, we teleport them to the equivalent point
+  // on the other side of the loop.
+  function bounds() {
+    return {
+      realStart: topOf(1),
+      realEnd: topOf(N) + allCards[N].offsetHeight,
+      cloneTopHeight: allCards[0].offsetHeight,
+      cloneBottomHeight: allCards[N + 1].offsetHeight,
+    };
+  }
+
+  let teleporting = false;
+
+  function checkLoopBoundaries() {
+    if (teleporting) return;
+    const y = window.scrollY;
+    const { realStart, realEnd } = bounds();
+
+    // Going UP past the start → teleport DOWN to the equivalent point near the end
+    if (y < realStart) {
+      const overshoot = realStart - y;       // how far above the real start we are
+      const newY = realEnd - overshoot;      // same distance before the real end
+      teleporting = true;
+      window.scrollTo(0, newY);
+      // Allow one frame to settle before unlocking
+      requestAnimationFrame(() => { teleporting = false; });
+      return;
+    }
+
+    // Going DOWN past the end → teleport UP to the equivalent point near the start
+    if (y >= realEnd) {
+      const overshoot = y - realEnd;         // how far past the real end we are
+      const newY = realStart + overshoot;    // same distance into the real start
+      teleporting = true;
+      window.scrollTo(0, newY);
+      requestAnimationFrame(() => { teleporting = false; });
+      return;
+    }
+  }
+
+  // ===== STACK VISUAL EFFECT =====
+  function updateCards() {
+    const y = window.scrollY;
+    const vh = window.innerHeight;
+    let activeOriginalIdx = 0;
+
+    allCards.forEach((card, i) => {
+      const cardTop = card.offsetTop;
+      const cardHeight = card.offsetHeight;
+      const cardBottom = cardTop + cardHeight;
+      const distFromTop = y - cardTop;
+      const progress = distFromTop / cardHeight;
+
+      // Determine which ORIGINAL card is currently most prominent (for nav highlighting)
+      if (y >= cardTop - vh * 0.5 && y < cardBottom - vh * 0.3) {
+        if (i >= 1 && i <= N) {
+          activeOriginalIdx = i - 1;       // real card
+        } else if (i === 0) {
+          activeOriginalIdx = N - 1;       // top clone reflects last card
+        } else {
+          activeOriginalIdx = 0;           // bottom clone reflects first card
+        }
+      }
+
+      // Stack effect — cards push up + fade as they're scrolled past
+      if (progress < 1) {
+        card.style.transform = 'translateY(0) scale(1)';
+        card.style.opacity = '1';
+        card.style.filter = 'none';
+      } else {
+        const depth = Math.min(progress - 1, 2);
+        const scale = Math.max(0.88, 1 - depth * 0.06);
+        const opacity = Math.max(0.15, 1 - depth * 0.45);
+        const lift = Math.min(depth * 35, 70);
+        const blur = Math.min(depth * 1.5, 3);
+        card.style.transform = `translateY(-${lift}px) scale(${scale})`;
+        card.style.opacity = String(opacity);
+        card.style.filter = `blur(${blur}px)`;
+      }
+      card.style.zIndex = String(10 + i);
+    });
+
+    // Reveal all nav links once the user scrolls
+    if (y > 50) {
+      navLinks.forEach((link) => link.classList.add('revealed'));
+    }
+
+    // Highlight current section in nav
+    navLinks.forEach((link, i) => {
+      if (i === activeOriginalIdx) link.classList.add('active');
+      else link.classList.remove('active');
+    });
+  }
+
+  // ===== NAV CLICKS =====
   document.querySelectorAll('[data-target]').forEach(btn => {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.target);
-      const card = cards[idx];
+      const card = originalCards[idx];
       if (card) {
         window.scrollTo({ top: card.offsetTop, behavior: 'smooth' });
       }
     });
   });
 
-  // ============ CARD STACK ANIMATION ============
-  // As the user scrolls past each card, that card scales down + fades + lifts up
-  // (giving the illusion that it has slid up and "into" the menubar). The next
-  // card slides up from below to fill its place. Once a card has been passed,
-  // its corresponding nav link fades into the navigation bar.
-
-  const navLinks = document.querySelectorAll('.nav-link');
-  const cardArr = Array.from(cards);
-
-  function updateCards() {
-    const scrollY = window.scrollY;
-    const vh = window.innerHeight;
-    let activeIdx = 0;
-
-    cardArr.forEach((card, i) => {
-      const cardTop = card.offsetTop;
-      const cardHeight = card.offsetHeight;
-      const cardBottom = cardTop + cardHeight;
-      const distFromTop = scrollY - cardTop;
-      const progress = distFromTop / cardHeight;
-
-      // Mark active = whichever card is most prominent in viewport
-      if (scrollY >= cardTop - vh * 0.5 && scrollY < cardBottom - vh * 0.3) {
-        activeIdx = i;
-      }
-
-      if (progress < 0) {
-        // Below viewport — natural state
-        card.style.transform = 'translateY(0) scale(1)';
-        card.style.opacity = '1';
-        card.style.filter = 'none';
-      } else if (progress < 1) {
-        // Currently active — fully visible
-        card.style.transform = 'translateY(0) scale(1)';
-        card.style.opacity = '1';
-        card.style.filter = 'none';
-      } else {
-        // Scrolled past — push back into the stack
-        const depth = Math.min(progress - 1, 2);
-        const scale = Math.max(0.88, 1 - depth * 0.06);
-        const opacity = Math.max(0.15, 1 - depth * 0.45);
-        const lift = Math.min(depth * 35, 70);
-        const blur = Math.min(depth * 1.5, 3);
-
-        card.style.transform = `translateY(-${lift}px) scale(${scale})`;
-        card.style.opacity = String(opacity);
-        card.style.filter = `blur(${blur}px)`;
-      }
-
-      card.style.zIndex = String(10 + i);
-    });
-
-    // Reveal nav links as cards are passed
-    cardArr.forEach((card, i) => {
-      const cardTop = card.offsetTop;
-      const cardHeight = card.offsetHeight;
-      const triggerPoint = cardTop + cardHeight * 0.4;
-      const link = navLinks[i];
-      if (!link) return;
-
-      if (scrollY + vh * 0.5 >= triggerPoint) {
-        link.classList.add('revealed');
-      } else {
-        link.classList.remove('revealed');
-      }
-
-      if (i === activeIdx) link.classList.add('active');
-      else link.classList.remove('active');
-    });
-
-    // Philosophy link reveals as soon as scroll begins
-    if (scrollY > 50) navLinks[0]?.classList.add('revealed');
-  }
-
+  // ===== SCROLL HANDLER =====
   let ticking = false;
   window.addEventListener('scroll', () => {
+    checkLoopBoundaries();   // synchronous teleport check
     if (!ticking) {
-      requestAnimationFrame(() => { updateCards(); ticking = false; });
+      requestAnimationFrame(() => {
+        updateCards();
+        ticking = false;
+      });
       ticking = true;
     }
   }, { passive: true });
-  window.addEventListener('resize', updateCards);
+
+  window.addEventListener('resize', () => {
+    const y = window.scrollY;
+    const { realStart, realEnd } = bounds();
+    if (y < realStart || y >= realEnd) {
+      window.scrollTo(0, realStart);
+    }
+    updateCards();
+  });
+
+  // ===== INITIAL POSITION =====
+  function jumpToFirstReal() {
+    teleporting = true;
+    window.scrollTo(0, topOf(1));
+    requestAnimationFrame(() => { teleporting = false; updateCards(); });
+  }
+
+  setTimeout(() => {
+    jumpToFirstReal();
+    updateCards();
+  }, 50);
+
   updateCards();
 
   // ============ INTRO ANIMATION SEQUENCE ============
@@ -2188,20 +1919,15 @@
   // Step 4: Bottle returns upright (6.5s)
   // Step 5: Hand reaches in (6.8s)
   // Step 6: Hand pulls glass away (7.5s)
-  // Step 7: CTA + drag puzzle appear (8.8s)
+  // Step 7: Intro dismisses automatically (~8.8s)
 
   const introOverlay = document.getElementById('introOverlay');
-  const introCta = document.getElementById('introCta');
-  const introSkip = document.getElementById('introSkip');
   const pourScene = document.getElementById('pourScene');
   const glassLiquid = document.getElementById('glassLiquid');
   const pourStream = document.getElementById('pourStream');
 
-  // Position pour stream relative to scene (bottle's neck position when tilted)
-  // Bottle tilts at 3s, stream starts at 3.4s
   function positionPourStream() {
     if (!pourStream) return;
-    const sceneRect = pourScene.getBoundingClientRect();
     pourStream.style.left = '50%';
     pourStream.style.bottom = '180px';
     pourStream.style.transform = 'translateX(-12px)';
@@ -2216,251 +1942,24 @@
     if (splash) splash.classList.add('active');
   }, 3400);
 
-  // Reveal CTA after the glass has been pulled away
-  const revealCtaTimer = setTimeout(() => {
-    pourScene.style.transition = 'opacity 1s ease';
-    pourScene.style.opacity = '0';
-    setTimeout(() => {
-      pourScene.style.display = 'none';
-      introCta.classList.add('visible');
-      initZipper();
-    }, 1000);
+  // After the pour sequence completes, dismiss the intro automatically
+  setTimeout(() => {
+    if (pourScene) {
+      pourScene.style.transition = 'opacity 1s ease';
+      pourScene.style.opacity = '0';
+    }
+    setTimeout(dismissIntro, 1000);
   }, 8800);
 
-  // Skip handler
-  introSkip.addEventListener('click', dismissIntro);
-
   function dismissIntro() {
-    clearTimeout(revealCtaTimer);
     introOverlay.classList.add('dismissed');
     document.body.classList.remove('intro-active');
     setTimeout(() => {
       introOverlay.style.display = 'none';
+      // Ensure scroll lands on the first real card after intro closes
+      if (typeof jumpToFirstReal === 'function') jumpToFirstReal();
       updateCards();
     }, 1000);
-  }
-
-  // ============ ZIPPER PUZZLE — SEAL THE BOTTLE ============
-  // The user drags the slider from the BOTTOM of the bottle to the TOP.
-  // Below the slider: split open halves are visible (zipper open).
-  // Above the slider: closed seam is visible (zipper closed).
-  // When the slider reaches the top, the bottle is fully sealed.
-
-  let zipperReady = false;
-  let zipperLocked = false;
-
-  function initZipper() {
-    const slider = document.getElementById('zipSlider');
-    const halfL = document.getElementById('zipHalfLeft');
-    const halfR = document.getElementById('zipHalfRight');
-    const closed = document.getElementById('zipClosed');
-    const instruction = document.getElementById('zipperInstruction');
-    const progressBar = document.getElementById('zipperProgressBar');
-    const bottleEl = document.querySelector('.zipper-bottle');
-
-    if (!slider || !bottleEl) return;
-
-    // Bottle inner area where the zipper runs (top of neck to bottom of body).
-    // In the SVG (160 x 420 viewBox): zipper goes from y=20 (neck top) to y=410 (bottle bottom).
-    // The bottle div has height 420px, so:
-    const TOP_PX = 20;       // top of zipper track
-    const BOTTOM_PX = 405;   // bottom of zipper track
-    const TRAVEL = BOTTOM_PX - TOP_PX;
-
-    // Initial position: slider at the BOTTOM (zipper fully open).
-    let sliderY = BOTTOM_PX;
-    updateZipper(sliderY);
-
-    function updateZipper(y) {
-      sliderY = Math.max(TOP_PX, Math.min(BOTTOM_PX, y));
-      // Position the slider visually
-      slider.style.top = (sliderY - 28) + 'px';
-
-      // BELOW the slider = open halves are visible
-      // ABOVE the slider = closed seam is visible
-
-      // Closed seam goes from TOP_PX down to sliderY
-      const closedHeight = sliderY - TOP_PX;
-      closed.style.top = TOP_PX + 'px';
-      closed.style.height = closedHeight + 'px';
-
-      // Open halves go from sliderY down to BOTTOM_PX
-      // Use clip-path to only show that bottom portion
-      const openTop = sliderY;
-      const openBottom = BOTTOM_PX;
-      const openHeight = openBottom - openTop;
-
-      // Halves drift apart depending on how far they are from the slider
-      // The further down (further from slider), the more they spread.
-      const maxSpread = 8; // px each side at the very bottom
-
-      halfL.style.clipPath = `inset(${openTop}px 0 ${420 - openBottom}px 0)`;
-      halfR.style.clipPath = `inset(${openTop}px 0 ${420 - openBottom}px 0)`;
-
-      // Use a gradient-style spread: linear from 0 at slider to maxSpread at bottom
-      // We achieve this by translating the halves outward along the open section.
-      // For simplicity, give each half a constant outward shift while open is visible.
-      halfL.style.transform = `translateX(${-12 - maxSpread}px)`;
-      halfR.style.transform = `translateX(${4 + maxSpread}px)`;
-
-      // Progress: how close is the slider to the TOP?
-      const progress = 1 - ((sliderY - TOP_PX) / TRAVEL);
-      progressBar.style.width = (progress * 100) + '%';
-
-      // Update instruction text at milestones
-      if (progress >= 1 && !zipperLocked) {
-        completeZipper();
-      } else if (progress > 0.6) {
-        instruction.textContent = '— Almost there —';
-      } else if (progress > 0.05) {
-        instruction.textContent = '— Keep pulling up —';
-      } else {
-        instruction.textContent = '— Pull the zipper up to seal the bottle —';
-      }
-    }
-
-    function completeZipper() {
-      zipperLocked = true;
-      // Snap halves perfectly together — bottle is fully sealed
-      halfL.style.transform = 'translateX(-12px)';
-      halfR.style.transform = 'translateX(4px)';
-      halfL.style.opacity = '0';
-      halfR.style.opacity = '0';
-      // Make the closed seam fade naturally too (the bottle is now whole)
-      setTimeout(() => {
-        closed.style.transition = 'opacity 0.8s ease';
-        closed.style.opacity = '0';
-        slider.style.transition = 'opacity 0.8s ease 0.3s';
-        slider.style.opacity = '0';
-      }, 400);
-
-      instruction.textContent = '✓  SEALED — Welcome to SIGNATUS';
-      instruction.classList.add('success');
-      progressBar.classList.add('success');
-
-      setTimeout(dismissIntro, 1600);
-    }
-
-    // ===== DRAG HANDLING =====
-    let dragging = false;
-    let startY = 0;
-    let startSliderY = 0;
-
-    function getY(e) {
-      return e.touches ? e.touches[0].clientY : e.clientY;
-    }
-
-    function startDrag(e) {
-      if (zipperLocked) return;
-      e.preventDefault();
-      dragging = true;
-      startY = getY(e);
-      startSliderY = sliderY;
-      slider.classList.add('dragging');
-    }
-
-    function moveDrag(e) {
-      if (!dragging || zipperLocked) return;
-      e.preventDefault();
-      const currentY = getY(e);
-      const delta = currentY - startY;
-      updateZipper(startSliderY + delta);
-    }
-
-    function endDrag() {
-      if (!dragging) return;
-      dragging = false;
-      slider.classList.remove('dragging');
-    }
-
-    slider.addEventListener('mousedown', startDrag);
-    slider.addEventListener('touchstart', startDrag, { passive: false });
-    document.addEventListener('mousemove', moveDrag);
-    document.addEventListener('touchmove', moveDrag, { passive: false });
-    document.addEventListener('mouseup', endDrag);
-    document.addEventListener('touchend', endDrag);
-
-    zipperReady = true;
-  }
-
-  // ============ CONTACT FORM HANDLER ============
-  // Sends form submissions to the SIGNATUS backend, which forwards them by email
-  // to the atelier. The recipient address is configured server-side and never
-  // exposed to the browser.
-
-  const contactForm = document.getElementById('contactForm');
-  const formSubmit = document.getElementById('formSubmit');
-  const formStatus = document.getElementById('formStatus');
-
-  // Backend endpoint. When developing locally, this is http://localhost:3000/api/contact.
-  // For production, set this to your deployed backend URL (e.g. https://api.signatus.at/contact).
-  const API_ENDPOINT = (() => {
-    const host = window.location.hostname;
-    if (host === 'localhost' || host === '127.0.0.1' || host === '') {
-      return 'http://localhost:3000/api/contact';
-    }
-    // Same origin in production (when frontend & backend are served from the same domain)
-    return '/api/contact';
-  })();
-
-  if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('contactName').value.trim();
-      const email = document.getElementById('contactEmail').value.trim();
-      const subject = document.getElementById('contactSubject').value;
-      const message = document.getElementById('contactMessage').value.trim();
-      const honeypot = contactForm.querySelector('input[name="website"]').value;
-
-      if (!name || !email || !message) {
-        showFormStatus('Please complete all required fields.', 'error');
-        return;
-      }
-
-      // Basic email validation
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showFormStatus('Please enter a valid email address.', 'error');
-        return;
-      }
-
-      formSubmit.disabled = true;
-      formSubmit.textContent = 'Sending…';
-
-      try {
-        const response = await fetch(API_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, subject, message, website: honeypot })
-        });
-
-        const data = await response.json().catch(() => ({}));
-
-        if (response.ok) {
-          showFormStatus('Thank you. Your message has been received — we will reply within two working days.', 'success');
-          contactForm.reset();
-        } else {
-          const errorMsg = data.error || 'Something went wrong. Please try again in a moment.';
-          showFormStatus(errorMsg, 'error');
-        }
-      } catch (err) {
-        showFormStatus('Unable to reach our atelier right now. Please try again shortly.', 'error');
-      }
-
-      formSubmit.disabled = false;
-      formSubmit.textContent = 'Send Message';
-    });
-  }
-
-  function showFormStatus(text, type) {
-    formStatus.textContent = text;
-    formStatus.className = 'form-status ' + type;
-    if (type === 'success') {
-      setTimeout(() => {
-        formStatus.classList.remove('success');
-        formStatus.style.display = 'none';
-      }, 10000);
-    }
   }
 </script>
 
